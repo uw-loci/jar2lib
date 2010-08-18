@@ -89,6 +89,10 @@ public class ClassList {
       if (!lName.endsWith(".class")) continue; // skip non-classes
       if (lName.indexOf("$") >= 0) continue; // skip inner classes
       final String className = name.substring(0, name.length() - 6);
+
+      // TEMP - workaround for Jace bug
+      if (className.indexOf("_") >= 0) continue;
+
       classes.add(className);
     }
   }
