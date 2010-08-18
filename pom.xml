@@ -60,6 +60,11 @@
           <descriptors>
             <descriptor>src/main/assembly/deps.xml</descriptor>
           </descriptors>
+          <archive>
+            <manifest>
+              <mainClass>loci.jar2lib.Jar2Lib</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
