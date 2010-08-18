@@ -1,0 +1,29 @@
+//
+// $headerName
+//
+$headerBlock
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by $user via JaceHeaderAutogen on $timestamp
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+#ifndef $headerLabel
+\#define $headerLabel
+
+\#include "jace.h"
+
+#set ($last = "")
+#foreach ($className in $q.classes())
+#if ($last != "" && $q.isNewPackage($className, $last))
+//using namespace jace::proxy::${q.namespace($last)};
+
+#end##if ($last != "" && $q.isNewPackage($className, $last))
+\#include "jace/proxy/${q.header($className)}"
+#set ($last = $className)
+#end##foreach $className
+//using namespace jace::proxy::${q.namespace($last)};
+
+#endif

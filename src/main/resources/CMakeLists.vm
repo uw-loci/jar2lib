@@ -1,0 +1,55 @@
+#
+# CMakeLists.txt
+#
+$headerBlock
+# CMake build file for $projectName.
+
+cmake_minimum_required(VERSION 2.8)
+
+project($projectId)
+
+include(jace/Prerequisites.cmake)
+
+add_subdirectory(jace)
+
+# TODO - eliminate use of JACE_DIR since we are bundling the source directly
+#message(STATUS "-- Jace:")
+\#set(JACE_DIR NOTFOUND CACHE PATH
+#  "The path to toplevel directory of your Jace checkout")
+\#if(IS_DIRECTORY "${JACE_DIR}")
+#  message(STATUS "jace root     : ${JACE_DIR}")
+\#else(IS_DIRECTORY "${JACE_DIR}")
+#  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
+#endif(IS_DIRECTORY "${JACE_DIR}")
+
+# -- build $projectName --
+
+include_directories(include
+  "proxies/include" "${JACE_CPP_DIR}/include"
+  "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
+
+file(GLOB_RECURSE PROJECT_SRC "proxies/source/*.cpp")
+
+add_library($projectId SHARED ${PROJECT_SRC})
+
+target_link_libraries($projectId jace)
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties($projectId PROPERTIES
+    COMPILE_FLAGS "-fpermissive")
+else(CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties($projectId PROPERTIES
+    DEFINE_SYMBOL JACE_PROXY_EXPORTS)
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
+target_link_libraries($projectId jace)
+
+# -- build some examples for testing $projectId --
+
+# TODO - eliminate hard-coded sources below, in favor of user-specified option
+
+# add_executable(showinf source/showinf.cpp)
+# target_link_libraries(showinf $projectId jace "${JAVA_JVM_LIBRARY}")
+
+# add_executable(minimum_writer source/minimum_writer.cpp)
+# target_link_libraries(minimum_writer $projectId jace "${JAVA_JVM_LIBRARY}")
