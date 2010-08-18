@@ -50,6 +50,10 @@ import java.util.jar.JarFile;
  */
 public class Jar2Lib {
 
+  // -- Constants --
+
+  private static final String RESOURCE_PREFIX = "project-files/";
+
   // -- Fields --
 
   private String projectId;
@@ -220,9 +224,12 @@ public class Jar2Lib {
   public void copyResources(File includeDir) throws IOException {
     final File outputDir = new File(outputPath);
     log("--> Copying resources");
-    final List<String> jaceResources = findResources("jace/");
-    for (String resource : jaceResources) copyResource(resource, outputDir);
-    copyResource("jace.h", includeDir);
+    final List<String> projectResources = findResources(RESOURCE_PREFIX);
+    for (String resource : projectResources) {
+      final String outPath = resource.substring(RESOURCE_PREFIX.length());
+      if (outPath.equals("")) continue; // skip base folder
+      copyResource(resource, outPath, outputDir);
+    }
   }
 
   /**
@@ -352,11 +359,11 @@ public class Jar2Lib {
   }
 
   /** Copies the given resource to the specified output directory. */
-  private void copyResource(String resource, File baseDir)
+  private void copyResource(String resource, String outPath, File baseDir)
     throws IOException
   {
-    log(resource);
-    final File outputFile = new File(baseDir, resource);
+    log(outPath);
+    final File outputFile = new File(baseDir, outPath);
     final File outputDir = outputFile.getParentFile();
     if (!outputDir.exists()) outputDir.mkdirs();
     if (resource.endsWith("/")) {
