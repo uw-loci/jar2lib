@@ -325,13 +325,18 @@ public class Jar2Lib {
     final String jrePath = findRuntime();
     sb.append(jrePath);
     for (String jarPath : jarPaths) {
-      sb.append(":");
+      sb.append(File.pathSeparator);
       sb.append(jarPath);
     }
     final String classPath = System.getProperty("java.class.path");
     if (classPath != null && !classPath.equals("")) {
-      sb.append(":");
+      sb.append(File.pathSeparator);
       sb.append(classPath);
+    }
+    final String bootClassPath = System.getProperty("sun.boot.class.path");
+    if (bootClassPath != null && !bootClassPath.equals("")) {
+      sb.append(File.pathSeparator);
+      sb.append(bootClassPath);
     }
     return sb.toString();
   }
