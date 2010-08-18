@@ -50,12 +50,10 @@ import java.util.jar.JarFile;
  */
 public class Jar2Lib {
 
-  // -- Constants --
-
-  public static final String DEFAULT_OUTPUT_DIR = "jar2lib-output";
-
   // -- Fields --
 
+  private String projectId;
+  private String projectName;
   private List<String> jarPaths;
   private String conflictsPath;
   private String headerPath;
@@ -65,17 +63,56 @@ public class Jar2Lib {
 
   public Jar2Lib() {
     jarPaths = new ArrayList<String>();
-    outputPath = DEFAULT_OUTPUT_DIR;
   }
 
   // -- Jar2Lib methods --
 
+  public String getProjectId() {
+    return projectId;
+  }
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
+  }
+  public String getProjectName() {
+    return projectName;
+  }
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
+  public List<String> getLibraryPaths() {
+    return jarPaths;
+  }
+  public void setLibraryPaths(List<String> jarPaths) {
+    this.jarPaths = jarPaths;
+  }
+  public String getConflictsPath() {
+    return conflictsPath;
+  }
+  public void setConflictsPath(String conflictsPath) {
+    this.conflictsPath = conflictsPath;
+  }
+  public String getHeaderPath() {
+    return headerPath;
+  }
+  public void setHeaderPath(String headerPath) {
+    this.headerPath = headerPath;
+  }
+  public String getOutputPath() {
+    return outputPath;
+  }
+  public void setOutputPath(String outputPath) {
+    this.outputPath = outputPath;
+  }
+
+  /** Parses the settings from the given command line arguments. */
   public void parseArgs(String[] args) {
     jarPaths = new ArrayList<String>();
     conflictsPath = null;
     headerPath = null;
-    outputPath = DEFAULT_OUTPUT_DIR;
-    for (int i = 0; i < args.length; i++) {
+    outputPath = null;
+    projectId = args.length >= 1 ? args[0] : null;
+    projectName = args.length >= 2 ? args[1] : null;
+    for (int i = 2; i < args.length; i++) {
       final String arg = args[i];
       if (arg.equals("-conflicts")) {
         if (i == args.length - 1) die("Error: no conflicts file given.");
@@ -92,15 +129,46 @@ public class Jar2Lib {
       else if (arg.startsWith("-")) die("Unknown flag: " + arg);
       else jarPaths.add(arg);
     }
-    if (jarPaths.size() == 0) {
-      die("Usage: java " + getClass().getName() +
-        " library.jar [library2.jar ...]\n" +
-				"  [-conflicts conflicts.txt] [-header header.txt]\n" +
-				"  [-output /path/to/output-project]");
+    if (projectId == null || projectName == null || jarPaths.size() == 0) {
+      die("Usage: java " + getClass().getName() + " projectId projectName\n" +
+        "  library.jar [library2.jar ...]\n" +
+        "  [-conflicts conflicts.txt] [-header header.txt]\n" +
+        "  [-output /path/to/output-project]");
     }
+    if (outputPath == null) outputPath = projectId;
   }
 
+  /** Generates a C++ wrapper project based on the current settings. */
   public void execute() throws IOException, VelocityException {
+    checkInputs();
+    final File includeDir = generateFiles();
+    copyResources(includeDir);
+    final File proxiesDir = generateProxies(includeDir);
+    fixConflicts(proxiesDir);
+
+    // TODO - print instructions on how to proceed with CMake
+    // TODO - copy "final product" files such as wrapped JARs to build dir
+
+    log("--> Done");
+  }
+
+  /**
+   * Checks that the current settings for project production are valid.
+   * Creates the output directory if it doesn't already exist.
+   *
+   * @throws IllegalStateException if the settings are invalid.
+   */
+  public void checkInputs() {
+    // check project ID
+    if (projectId == null || !projectId.matches("^(\\w)+$")) {
+      throw new IllegalStateException("Invalid project ID: " + projectId);
+    }
+
+    // check project name
+    if (projectName == null) {
+      throw new IllegalStateException("Invalid project name: " + projectName);
+    }
+
     // check conflicts file
     if (conflictsPath != null && !new File(conflictsPath).exists()) {
       throw new IllegalStateException("Invalid conflicts file: " +
@@ -118,34 +186,62 @@ public class Jar2Lib {
     if (!outputDir.isDirectory()) {
       throw new IllegalStateException("Not a valid directory: " + outputPath);
     }
+  }
 
-    // generate jace headers
+  /**
+   * Generates one header per input Java library.
+   * Also generates the CMake build file.
+   *
+   * @return The include path where headers were written.
+   */
+  public File generateFiles() throws IOException, VelocityException {
+    final File outputDir = new File(outputPath);
+
     final VelocityAutogen generator = new VelocityAutogen(headerPath);
     final File includeDir = new File(outputPath, "include");
-		if (!includeDir.exists()) includeDir.mkdirs();
+    if (!includeDir.exists()) includeDir.mkdirs();
     for (String jarPath : jarPaths) {
-			final File jarFile = new File(jarPath);
+      final File jarFile = new File(jarPath);
       log("--> Generating header for " + jarFile.getName());
       generator.createJaceHeader(jarPath, path(includeDir));
     }
     log("--> Generating CMake build file");
-		final String projectId = "bfcpp"; //TODO TEMP!
-		final String projectName = "Bio-Formats C++ bindings"; //TODO TEMP!
-		generator.createCMakeLists(projectId, projectName, path(outputDir));
+    generator.createCMakeLists(projectId, projectName, path(outputDir));
 
-    // copy resources to output directory
+    return includeDir;
+  }
+
+  /**
+   * Copies static project resources into the project directory.
+   * In particular, copies the Jace C++ distribution and related files.
+   *
+   * @param includeDir Folder containing the C++ headers.
+   */
+  public void copyResources(File includeDir) throws IOException {
+    final File outputDir = new File(outputPath);
     log("--> Copying resources");
     final List<String> jaceResources = findResources("jace/");
     for (String resource : jaceResources) copyResource(resource, outputDir);
+    copyResource("jace.h", includeDir);
+  }
 
-    // generate proxies using jace
+  /**
+   * Generates the C++ proxy classes enumerated in the C++ headers.
+   *
+   * @param includeDir Folder containing the C++ headers.
+   * @return The path where proxies were written.
+   * @throws UnsupportedEncodingException
+   */
+  public File generateProxies(File includeDir)
+    throws UnsupportedEncodingException
+  {
     final File sourceDir = new File(outputPath, "source");
-		if (!sourceDir.exists()) sourceDir.mkdirs();
+    if (!sourceDir.exists()) sourceDir.mkdirs();
     final File proxiesDir = new File(outputPath, "proxies");
     final File proxiesIncludeDir = new File(proxiesDir, "include");
-		if (!proxiesIncludeDir.exists()) proxiesIncludeDir.mkdirs();
+    if (!proxiesIncludeDir.exists()) proxiesIncludeDir.mkdirs();
     final File proxiesSourceDir = new File(proxiesDir, "source");
-		if (!proxiesSourceDir.exists()) proxiesSourceDir.mkdirs();
+    if (!proxiesSourceDir.exists()) proxiesSourceDir.mkdirs();
     final String osName = System.getProperty("os.name");
     final boolean isWindows = osName.indexOf("Windows") >= 0;
     final List<String> autoProxyArgs = new ArrayList<String>();
@@ -159,17 +255,21 @@ public class Jar2Lib {
     log("--> Generating proxies");
     AutoProxy.main(autoProxyArgs.toArray(new String[0]));
 
-    // post-process proxies to resolve any conflicts
-    if (conflictsPath != null) {
-      log("--> Renaming conflicting constants");
-      final FixProxies fixProxies = new FixProxies(conflictsPath);
-      fixProxies.fixProxies(path(proxiesDir));
-    }
+    return proxiesDir;
+  }
 
-    // TODO - print instructions on how to proceed with CMake
-    // TODO - copy "final product" files such as wrapped JARs to build dir
-
-    log("--> Done");
+  /**
+   * Post-processes the generated proxies to correct any
+   * conflicts identified in the specified conflicts file.
+   *
+   * @param proxiesDir Folder containing the generated C++ proxies.
+   * @throws IOException
+   */
+  public void fixConflicts(File proxiesDir) throws IOException {
+    if (conflictsPath == null) return;
+    log("--> Renaming conflicting constants");
+    final FixProxies fixProxies = new FixProxies(conflictsPath);
+    fixProxies.fixProxies(path(proxiesDir));
   }
 
   // -- Main method --
@@ -221,6 +321,11 @@ public class Jar2Lib {
       sb.append(":");
       sb.append(jarPath);
     }
+    final String classPath = System.getProperty("java.class.path");
+    if (classPath != null && !classPath.equals("")) {
+      sb.append(":");
+      sb.append(classPath);
+    }
     return sb.toString();
   }
 
@@ -250,33 +355,35 @@ public class Jar2Lib {
   private void copyResource(String resource, File baseDir)
     throws IOException
   {
-		log(resource);
+    log(resource);
     final File outputFile = new File(baseDir, resource);
     final File outputDir = outputFile.getParentFile();
     if (!outputDir.exists()) outputDir.mkdirs();
-		if (resource.endsWith("/")) {
-			// resource is a directory
-			outputFile.mkdir();
-		}
-		else {
-			// resource is a file
-			final InputStream in = getClass().getResourceAsStream("/" + resource);
-			final OutputStream out = new FileOutputStream(outputFile);
-			final byte[] buf = new byte[512 * 1024]; // 512K buffer
-			while (true) {
-				int r = in.read(buf);
-				if (r <= 0) break; // EOF
-				out.write(buf, 0, r);
-			}
-			out.close();
-			in.close();
-		}
+    if (resource.endsWith("/")) {
+      // resource is a directory
+      outputFile.mkdir();
+    }
+    else {
+      // resource is a file
+      final InputStream in = getClass().getResourceAsStream("/" + resource);
+      final OutputStream out = new FileOutputStream(outputFile);
+      final byte[] buf = new byte[512 * 1024]; // 512K buffer
+      while (true) {
+        int r = in.read(buf);
+        if (r <= 0) break; // EOF
+        out.write(buf, 0, r);
+      }
+      out.close();
+      in.close();
+    }
   }
 
-	/**
-	 * Finds the JAR file (or file system path)
-	 * from which the given class was loaded.
-	 */
+  // -- Static utility methods --
+
+  /**
+   * Finds the JAR file (or file system path)
+   * from which the given class was loaded.
+   */
   public static String findEnclosingJar(Class<?> c)
     throws UnsupportedEncodingException
   {

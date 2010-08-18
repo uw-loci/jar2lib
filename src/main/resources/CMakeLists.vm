@@ -12,20 +12,9 @@ include(jace/Prerequisites.cmake)
 
 add_subdirectory(jace)
 
-# TODO - eliminate use of JACE_DIR since we are bundling the source directly
-#message(STATUS "-- Jace:")
-\#set(JACE_DIR NOTFOUND CACHE PATH
-#  "The path to toplevel directory of your Jace checkout")
-\#if(IS_DIRECTORY "${JACE_DIR}")
-#  message(STATUS "jace root     : ${JACE_DIR}")
-\#else(IS_DIRECTORY "${JACE_DIR}")
-#  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
-#endif(IS_DIRECTORY "${JACE_DIR}")
-
 # -- build $projectName --
 
-include_directories(include
-  "proxies/include" "${JACE_CPP_DIR}/include"
+include_directories(include "proxies/include" "jace/include"
   "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
 
 file(GLOB_RECURSE PROJECT_SRC "proxies/source/*.cpp")
