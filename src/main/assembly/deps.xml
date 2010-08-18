@@ -7,15 +7,17 @@
     <format>jar</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.outputDirectory}</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
   <dependencySets>
     <dependencySet>
+      <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
-  <fileSets>
-    <fileSet>
-      <directory>${project.build.outputDirectory}</directory>
-    </fileSet>
-  </fileSets>
 </assembly>
