@@ -43,7 +43,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -52,6 +51,15 @@
               <packageName>loci.jar2lib</packageName>
             </manifest>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-5</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/deps.xml</descriptor>
+          </descriptors>
         </configuration>
       </plugin>
     </plugins>
