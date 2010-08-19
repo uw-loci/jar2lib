@@ -28,15 +28,18 @@
   </licenses>
 
   <dependencies>
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.6.4</version>
-    </dependency>
+    <!-- 3rd party -->
     <dependency>
       <groupId>jace</groupId>
       <artifactId>jace</artifactId>
       <version>r39</version>
+    </dependency>
+
+    <!-- central -->
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.6.4</version>
     </dependency>
   </dependencies>
 

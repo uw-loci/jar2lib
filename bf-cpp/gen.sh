@@ -2,7 +2,7 @@
 
 # NB: Run "mvn assembly:assembly" first to build the complete Jar2Lib JAR file.
 
-JAR2LIB_DIR=`cd "$(dirname $0)/.." && pwd`
+JAR2LIB_DIR=`cd "$(dirname $0)/.."; pwd`
 ARTIFACT_DIR=~/code/LOCI/java/artifacts
 java -jar "$JAR2LIB_DIR/target/jar2lib-1.0-SNAPSHOT-deps.jar" \
   bfcpp "Bio-Formats C++ bindings" \
