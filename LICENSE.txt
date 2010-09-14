@@ -1,9 +1,4 @@
-//
-// VelocityException.java
-//
-
-/*
-Jar2Lib tool for generating C++ proxy classes for a Java library.
+Jar2lib tool for generating C++ proxy classes for a Java library.
 
 Copyright (c) 2010, UW-Madison LOCI
 All rights reserved.
@@ -30,25 +25,3 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
-*/
-
-package loci.jar2lib;
-
-/**
- * VelocityException is the exception thrown when something
- * goes wrong with an Apache Velocity operation.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/projects/jar2lib/src/main/java/loci/jar2lib/VelocityException.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/projects/jar2lib/src/main/java/loci/jar2lib/VelocityException.java">SVN</a></dd></dl>
- *
- * @author Curtis Rueden ctrueden at wisc.edu
- */
-public class VelocityException extends Exception {
-
-  public VelocityException() { super(); }
-  public VelocityException(String s) { super(s); }
-  public VelocityException(String s, Throwable cause) { super(s, cause); }
-  public VelocityException(Throwable cause) { super(cause); }
-
-}
