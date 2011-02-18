@@ -30,7 +30,7 @@
     <dependency>
       <groupId>jace</groupId>
       <artifactId>jace</artifactId>
-      <version>r61</version>
+      <version>r39</version>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
