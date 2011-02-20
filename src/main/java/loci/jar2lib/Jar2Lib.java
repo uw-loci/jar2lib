@@ -175,7 +175,7 @@ public class Jar2Lib {
    */
   public void checkInputs() {
     // check project ID
-    if (projectId == null || !projectId.matches("^(\\w)+$")) {
+    if (projectId == null || !projectId.matches("^(\\w)([\\w\\-])*$")) {
       throw new IllegalStateException("Invalid project ID: " + projectId);
     }
 
@@ -312,12 +312,12 @@ public class Jar2Lib {
 
   // -- Helper methods --
 
-  private void log(String message) {
+  protected void log(String message) {
     // TODO - improving logging mechanism?
     System.out.println(message);
   }
 
-  private void die(String message) {
+  protected void die(String message) {
     throw new IllegalArgumentException(message);
   }
 
@@ -328,39 +328,10 @@ public class Jar2Lib {
     return path.replaceAll(File.separator, "/");
   }
 
-  /** Builds a classpath corresponding to the given list of JAR files. */
-  private String classpath(List<String> jarPaths)
-    throws UnsupportedEncodingException
-  {
-    final StringBuilder sb = new StringBuilder();
-    final String jrePath = findRuntime();
-    sb.append(jrePath);
-    for (String jarPath : jarPaths) {
-      sb.append(File.pathSeparator);
-      sb.append(jarPath);
-    }
-    final String classPath = System.getProperty("java.class.path");
-    if (classPath != null && !classPath.equals("")) {
-      sb.append(File.pathSeparator);
-      sb.append(classPath);
-    }
-    final String bootClassPath = System.getProperty("sun.boot.class.path");
-    if (bootClassPath != null && !bootClassPath.equals("")) {
-      sb.append(File.pathSeparator);
-      sb.append(bootClassPath);
-    }
-    return sb.toString();
-  }
-
-  /** Locates the JAR file containing this JVM's classes. */
-  private String findRuntime() throws UnsupportedEncodingException {
-    return findEnclosingJar(Object.class);
-  }
-
   /** Scans the enclosing JAR file for all resources beneath the given path. */
   private List<String> findResources(String resourceDir) throws IOException {
     final List<String> resources = new ArrayList<String>();
-    final String jarPath = findEnclosingJar(getClass());
+    final String jarPath = findEnclosingJar(Jar2Lib.class);
     final JarFile jarFile = new JarFile(jarPath);
     final Enumeration<JarEntry> jarEntries = jarFile.entries();
     if (jarEntries != null) {
@@ -388,7 +359,7 @@ public class Jar2Lib {
     }
     else {
       // resource is a file
-      final InputStream in = getClass().getResourceAsStream("/" + resource);
+      final InputStream in = Jar2Lib.class.getResourceAsStream("/" + resource);
       final OutputStream out = new FileOutputStream(outputFile);
       final byte[] buf = new byte[512 * 1024]; // 512K buffer
       while (true) {
@@ -424,6 +395,35 @@ public class Jar2Lib {
     if (slash.equals("\\")) slash = "\\\\";
     path = path.replaceAll("/", slash);
     return path;
+  }
+
+  /** Builds a classpath corresponding to the given list of JAR files. */
+  private static String classpath(List<String> jarPaths)
+    throws UnsupportedEncodingException
+  {
+    final StringBuilder sb = new StringBuilder();
+    final String jrePath = findRuntime();
+    sb.append(jrePath);
+    for (String jarPath : jarPaths) {
+      sb.append(File.pathSeparator);
+      sb.append(jarPath);
+    }
+    final String classPath = System.getProperty("java.class.path");
+    if (classPath != null && !classPath.equals("")) {
+      sb.append(File.pathSeparator);
+      sb.append(classPath);
+    }
+    final String bootClassPath = System.getProperty("sun.boot.class.path");
+    if (bootClassPath != null && !bootClassPath.equals("")) {
+      sb.append(File.pathSeparator);
+      sb.append(bootClassPath);
+    }
+    return sb.toString();
+  }
+
+  /** Locates the JAR file containing this JVM's classes. */
+  private static String findRuntime() throws UnsupportedEncodingException {
+    return findEnclosingJar(Object.class);
   }
 
 }
