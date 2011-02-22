@@ -64,7 +64,7 @@ public class VelocityAutogen {
 
   // -- Constructor --
 
-  public VelocityAutogen(String headerPath) throws IOException {
+  public VelocityAutogen(final String headerPath) throws IOException {
     if (headerPath == null) javaHeader = scriptHeader = "";
     else {
       final File headerFile = new File(headerPath);
@@ -95,7 +95,7 @@ public class VelocityAutogen {
 
   // -- VelocityAutogen methods --
 
-  public void createJaceHeader(String jarPath, String outputPath)
+  public void createJaceHeader(final String jarPath, final String outputPath)
     throws VelocityException, IOException
   {
     final String jarName = new File(jarPath).getName();
@@ -122,8 +122,9 @@ public class VelocityAutogen {
     VelocityTools.processTemplate(ve, context, "jace-header.vm", headerPath);
   }
 
-  public void createCMakeLists(String projectId, String projectName,
-    String outputPath) throws VelocityException, IOException
+  public void createCMakeLists(final String projectId,
+  	final String projectName, final File[] sourceFiles,
+  	final String outputPath) throws VelocityException, IOException
   {
     final File buildFile = new File(outputPath, "CMakeLists.txt");
     final String buildPath = buildFile.getAbsolutePath();
@@ -135,9 +136,21 @@ public class VelocityAutogen {
     context.put("headerBlock", scriptHeader);
     context.put("projectId", projectId);
     context.put("projectName", projectName);
+    context.put("sourceFiles", sourceFiles);
+    context.put("q", this);
 
     // generate CMakeLists.txt file
     VelocityTools.processTemplate(ve, context, "CMakeLists.vm", buildPath);
+  }
+
+  // -- Utility methods --
+
+  /** Gets a simple name prefix with only alphameric characters. */
+  public static String simpleName(final File file) {
+  	final String name = file.getName();
+  	final int dot = name.indexOf(".");
+  	final String prefix = dot < 0 ? name : name.substring(0, dot);
+  	return prefix.replaceAll("[^\\w\\-]", "");
   }
 
 }
