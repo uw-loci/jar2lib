@@ -69,7 +69,8 @@ public class Jar2Lib {
 
   private String projectId;
   private String projectName;
-  private List<String> jarPaths;
+  private List<String> libraryJars;
+  private List<String> classpathJars;
   private String conflictsPath;
   private String headerPath;
   private String outputPath;
@@ -77,7 +78,8 @@ public class Jar2Lib {
   // -- Constructor --
 
   public Jar2Lib() {
-    jarPaths = new ArrayList<String>();
+    libraryJars = new ArrayList<String>();
+    classpathJars = new ArrayList<String>();
   }
 
   // -- Jar2Lib methods --
@@ -94,11 +96,17 @@ public class Jar2Lib {
   public void setProjectName(String projectName) {
     this.projectName = projectName;
   }
-  public List<String> getLibraryPaths() {
-    return jarPaths;
+  public List<String> getLibraryJars() {
+    return libraryJars;
   }
-  public void setLibraryPaths(List<String> jarPaths) {
-    this.jarPaths = jarPaths;
+  public void setLibraryJars(List<String> libraryJars) {
+    this.libraryJars = libraryJars;
+  }
+  public List<String> getClasspathJars() {
+    return classpathJars;
+  }
+  public void setClasspathJars(List<String> classpathJars) {
+    this.classpathJars = classpathJars;
   }
   public String getConflictsPath() {
     return conflictsPath;
@@ -121,12 +129,13 @@ public class Jar2Lib {
 
   /** Parses the settings from the given command line arguments. */
   public void parseArgs(String[] args) {
-    jarPaths = new ArrayList<String>();
+    projectId = args.length >= 1 ? args[0] : null;
+    projectName = args.length >= 2 ? args[1] : null;
+    libraryJars = new ArrayList<String>();
+    classpathJars = new ArrayList<String>();
     conflictsPath = null;
     headerPath = null;
     outputPath = null;
-    projectId = args.length >= 1 ? args[0] : null;
-    projectName = args.length >= 2 ? args[1] : null;
     for (int i = 2; i < args.length; i++) {
       final String arg = args[i];
       if (arg.equals("-conflicts")) {
@@ -142,9 +151,9 @@ public class Jar2Lib {
         outputPath = args[++i];
       }
       else if (arg.startsWith("-")) die("Unknown flag: " + arg);
-      else jarPaths.add(arg);
+      else libraryJars.add(arg);
     }
-    if (projectId == null || projectName == null || jarPaths.size() == 0) {
+    if (projectId == null || projectName == null || libraryJars.size() == 0) {
       die("Usage: java " + getClass().getName() + " projectId projectName\n" +
         "  library.jar [library2.jar ...]\n" +
         "  [-conflicts conflicts.txt] [-header header.txt]\n" +
@@ -215,7 +224,7 @@ public class Jar2Lib {
     final VelocityAutogen generator = new VelocityAutogen(headerPath);
     final File includeDir = new File(outputPath, "include");
     if (!includeDir.exists()) includeDir.mkdirs();
-    for (String jarPath : jarPaths) {
+    for (String jarPath : libraryJars) {
       final File jarFile = new File(jarPath);
       log("--> Generating header for " + jarFile.getName());
       generator.createJaceHeader(jarPath, path(includeDir));
@@ -267,7 +276,10 @@ public class Jar2Lib {
     autoProxyArgs.add(path(sourceDir));
     autoProxyArgs.add(path(proxiesIncludeDir));
     autoProxyArgs.add(path(proxiesSourceDir));
-    autoProxyArgs.add(classpath(jarPaths));
+    List<String> allJars = new ArrayList<String>();
+    allJars.addAll(libraryJars);
+    allJars.addAll(classpathJars);
+    autoProxyArgs.add(classpath(allJars));
     autoProxyArgs.add("-mindep");
     if (isWindows) autoProxyArgs.add("-exportsymbols");
     log("--> Generating proxies");
@@ -325,7 +337,7 @@ public class Jar2Lib {
   private String path(File file) {
     final String path = file.getAbsolutePath();
     // NB: Use forward slashes even on Windows.
-    return path.replaceAll(File.separator, "/");
+    return path.replaceAll("\\\\", "/");
   }
 
   /** Scans the enclosing JAR file for all resources beneath the given path. */
@@ -398,13 +410,13 @@ public class Jar2Lib {
   }
 
   /** Builds a classpath corresponding to the given list of JAR files. */
-  private static String classpath(List<String> jarPaths)
+  private static String classpath(List<String> libraryJars)
     throws UnsupportedEncodingException
   {
     final StringBuilder sb = new StringBuilder();
     final String jrePath = findRuntime();
     sb.append(jrePath);
-    for (String jarPath : jarPaths) {
+    for (String jarPath : libraryJars) {
       sb.append(File.pathSeparator);
       sb.append(jarPath);
     }
