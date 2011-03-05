@@ -121,6 +121,7 @@ public class FixProxies {
       System.err.println("Usage: java " + FixProxies.class.getName() +
         " conflicts.txt /path/to/proxies [/path/to/more/proxies ...]");
       System.exit(1);
+      return;
     }
     final String conflictsFile = args[0];
     final FixProxies fixProxies = new FixProxies(conflictsFile);

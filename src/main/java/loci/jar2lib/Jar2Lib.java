@@ -260,14 +260,12 @@ public class Jar2Lib {
     }
     log("--> Generating CMake build file");
     generator.createCMakeLists(projectId, projectName,
-    	sourceFiles, path(outputDir));
+      sourceFiles, path(outputDir));
   }
 
   /**
    * Copies static project resources into the project directory.
    * In particular, copies the Jace C++ distribution and related files.
-   *
-   * @param includeDir Folder containing the C++ headers.
    */
   public void generateSkeleton() throws IOException {
     log("--> Generating project skeleton");
@@ -311,9 +309,6 @@ public class Jar2Lib {
   /**
    * Post-processes the generated proxies to correct any
    * conflicts identified in the specified conflicts file.
-   *
-   * @param proxiesDir Folder containing the generated C++ proxies.
-   * @throws IOException
    */
   public void fixConflicts() throws IOException {
     if (conflictsPath == null) return;
@@ -404,17 +399,17 @@ public class Jar2Lib {
     }
   }
 
-	/**
+  /**
    * Copies the given file to to the source folder
    * of the specified output directory.
-	 * @throws IOException 
+   * @throws IOException 
    */
   private void copySourceFile(final File sourceFile) throws IOException {
-  	log(sourceFile.getPath());
-  	final File outputFile = new File(outputSourceDir, sourceFile.getName());
-  	final FileInputStream in = new FileInputStream(sourceFile);
-  	writeStreamToFile(in, outputFile);
-  	in.close();
+    log(sourceFile.getPath());
+    final File outputFile = new File(outputSourceDir, sourceFile.getName());
+    final FileInputStream in = new FileInputStream(sourceFile);
+    writeStreamToFile(in, outputFile);
+    in.close();
   }
 
   // -- Static utility methods --
@@ -480,16 +475,16 @@ public class Jar2Lib {
 
   /** Writes the contents of the given input stream to the specified file. */
   private static void writeStreamToFile(final InputStream in,
-  	final File outputFile) throws IOException
-	{
-	  final OutputStream out = new FileOutputStream(outputFile);
-	  final byte[] buf = new byte[512 * 1024]; // 512K buffer
-	  while (true) {
-	    int r = in.read(buf);
-	    if (r <= 0) break; // EOF
-	    out.write(buf, 0, r);
-	  }
-	  out.close();
-	}
+    final File outputFile) throws IOException
+  {
+    final OutputStream out = new FileOutputStream(outputFile);
+    final byte[] buf = new byte[512 * 1024]; // 512K buffer
+    while (true) {
+      int r = in.read(buf);
+      if (r <= 0) break; // EOF
+      out.write(buf, 0, r);
+    }
+    out.close();
+  }
 
 }

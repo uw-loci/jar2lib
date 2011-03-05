@@ -126,8 +126,8 @@ public class StringReplace {
 
   // -- Helper utility methods --
 
-  public static String fixEscaped(String s) {
-    s = s.replaceAll("\\\\n", "\n");
+  public static String fixEscaped(final String escapedString) {
+    String s = escapedString.replaceAll("\\\\n", "\n");
     s = s.replaceAll("\\\\r", "\r");
     s = s.replaceAll("\\\\t", "\t");
     return s;
