@@ -56,8 +56,8 @@ import java.util.jar.JarFile;
  * to a list of Java JAR files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/projects/jar2lib/src/main/java/loci/jar2lib/Jar2Lib.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/projects/jar2lib/src/main/java/loci/jar2lib/Jar2Lib.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/software/browser/trunk/projects/jar2lib/src/main/java/loci/jar2lib/Jar2Lib.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/software/trunk/projects/jar2lib/src/main/java/loci/jar2lib/Jar2Lib.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
