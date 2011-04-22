@@ -36,15 +36,20 @@ package loci.jar2lib;
 
 import jace.proxy.AutoProxy;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -76,6 +81,7 @@ public class Jar2Lib {
   private String conflictsPath;
   private String headerPath;
   private String sourcePath;
+  private String extrasPath;
   private String outputPath;
 
   private File[] sourceFiles;
@@ -169,6 +175,10 @@ public class Jar2Lib {
         if (i == args.length - 1) die("Error: no output path given.");
         outputPath = args[++i];
       }
+      else if (arg.equals("-extras")) {
+    	  if (i == args.length - 1) die("Error: no extras path given.");
+    	  extrasPath = args[++i];
+      }
       else if (arg.startsWith("-")) die("Unknown flag: " + arg);
       else libraryJars.add(arg);
     }
@@ -176,7 +186,7 @@ public class Jar2Lib {
       die("Usage: java " + getClass().getName() + " projectId projectName\n" +
         "  library.jar [library2.jar ...]\n" +
         "  [-conflicts conflicts.txt] [-header header.txt]\n" +
-        "  [-output /path/to/output-project]");
+        "  [-extras cmake_extras.txt] [-output /path/to/output-project]");
     }
     if (outputPath == null) outputPath = projectId;
   }
@@ -261,6 +271,27 @@ public class Jar2Lib {
     log("--> Generating CMake build file");
     generator.createCMakeLists(projectId, projectName,
       sourceFiles, path(outputDir));
+    
+    if (extrasPath != null)
+    { 
+    	String cmakePath = outputPath + "/CMakeLists.txt";
+
+    	OutputStream fout = new FileOutputStream(new File(cmakePath), true);
+    	InputStream fin = new FileInputStream(new File(extrasPath));
+
+    	byte[] buf = new byte[1];
+    	int len;
+
+    	while ((len = fin.read(buf)) >= 0) {
+    		if(len > 0) fout.write(buf, 0, len);
+    	}
+
+    	fout.flush();
+
+    	fin.close();
+    	fout.close();
+    }
+    
   }
 
   /**
