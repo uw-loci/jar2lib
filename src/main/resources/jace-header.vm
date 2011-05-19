@@ -14,6 +14,7 @@ $headerBlock
 \#define $headerLabel
 
 \#include "jace.h"
+\#include "java.h"
 
 #set ($last = "")
 #foreach ($className in $q.classes())

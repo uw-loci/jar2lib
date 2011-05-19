@@ -82,6 +82,7 @@ public class Jar2Lib {
   private String headerPath;
   private String sourcePath;
   private String extrasPath;
+  private String corePath;
   private String outputPath;
 
   private File[] sourceFiles;
@@ -147,6 +148,18 @@ public class Jar2Lib {
   public void setOutputPath(String outputPath) {
     this.outputPath = outputPath;
   }
+  public String getExtrasPath() {
+	    return extrasPath;
+  }
+  public void setExtrasPath(String extrasPath) {
+	this.extrasPath = extrasPath;
+  }
+  public String getCorePath() {
+	return corePath;
+  }
+  public void setCorePath(String corePath) {
+	this.corePath = corePath;
+  }
 
   /** Parses the settings from the given command line arguments. */
   public void parseArgs(String[] args) {
@@ -179,6 +192,10 @@ public class Jar2Lib {
     	  if (i == args.length - 1) die("Error: no extras path given.");
     	  extrasPath = args[++i];
       }
+      else if (arg.equals("-core")) {
+    	  if (i == args.length - 1) die("Error: no core classes path given.");
+    	  corePath = args[++i];
+      }
       else if (arg.startsWith("-")) die("Unknown flag: " + arg);
       else libraryJars.add(arg);
     }
@@ -186,7 +203,8 @@ public class Jar2Lib {
       die("Usage: java " + getClass().getName() + " projectId projectName\n" +
         "  library.jar [library2.jar ...]\n" +
         "  [-conflicts conflicts.txt] [-header header.txt]\n" +
-        "  [-extras cmake_extras.txt] [-output /path/to/output-project]");
+        "  [-extras cmake_extras.txt] [-output /path/to/output-project]\n +" +
+        "  [-core java_core_classes.txt");
     }
     if (outputPath == null) outputPath = projectId;
   }
@@ -249,12 +267,34 @@ public class Jar2Lib {
     if (!outputIncludeDir.exists()) outputIncludeDir.mkdirs();
     outputSourceDir = new File(outputDir, "source");
     if (!outputSourceDir.exists()) outputSourceDir.mkdirs();
-
+    
     proxiesDir = new File(outputPath, "proxies");
     proxiesIncludeDir = new File(proxiesDir, "include");
     if (!proxiesIncludeDir.exists()) proxiesIncludeDir.mkdirs();
     proxiesSourceDir = new File(proxiesDir, "source");
     if (!proxiesSourceDir.exists()) proxiesSourceDir.mkdirs();
+    
+    // create java.h
+    try {
+    	BufferedWriter fout = new BufferedWriter(new FileWriter(outputIncludeDir + File.separator + "java.h"));
+    	fout.write("//\n// java.h\n//\n\n");
+    	fout.write("// additional core java files to include\n\n");
+    	if(corePath != null)
+    	{
+    		BufferedReader fin = new BufferedReader(new FileReader(new File(corePath)));
+    		while(fin.ready())
+    		{
+    			fout.write("#include \"jace/proxy/" + fin.readLine().replace('.', '/') + ".h\"\n");
+    		}
+    		fin.close();
+    	}
+    	fout.flush();
+    	fout.close();
+    }
+    catch (IOException e)
+    {
+    	System.out.println("Error creating java.h");
+    }
   }
 
   /**
@@ -382,6 +422,7 @@ public class Jar2Lib {
   private File[] listSourceFiles(final String path) {
     if (path == null) return new File[0]; // no sources
     final File sourceDir = new File(path);
+    
     if (!sourceDir.exists()) return new File[0]; // no sources
     return sourceDir.listFiles(new FileFilter() {
       @Override
