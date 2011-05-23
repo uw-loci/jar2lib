@@ -310,7 +310,7 @@ public class Jar2Lib {
     }
     log("--> Generating CMake build file");
     generator.createCMakeLists(projectId, projectName,
-      sourceFiles, path(outputDir));
+      sourceFiles, path(outputDir), libraryJars);
     
     if (extrasPath != null)
     { 

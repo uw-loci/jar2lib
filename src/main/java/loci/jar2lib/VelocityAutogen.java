@@ -38,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -124,7 +125,7 @@ public class VelocityAutogen {
 
   public void createCMakeLists(final String projectId,
   	final String projectName, final File[] sourceFiles,
-  	final String outputPath) throws VelocityException, IOException
+  	final String outputPath, final List<String> libraryJars) throws VelocityException, IOException
   {
     final File buildFile = new File(outputPath, "CMakeLists.txt");
     final String buildPath = buildFile.getAbsolutePath();
@@ -132,11 +133,19 @@ public class VelocityAutogen {
     // initialize Velocity
     VelocityEngine ve = VelocityTools.createEngine();
     VelocityContext context = VelocityTools.createContext();
+    
+    File[] libJars = new File[libraryJars.size()];
+    
+    for (int i = 0; i < libraryJars.size(); i++)
+    {
+    	libJars[i] = new File(libraryJars.get(i));
+    }
 
     context.put("headerBlock", scriptHeader);
     context.put("projectId", projectId);
     context.put("projectName", projectName);
     context.put("sourceFiles", sourceFiles);
+    context.put("sourceJars", libJars);
     context.put("q", this);
 
     // generate CMakeLists.txt file

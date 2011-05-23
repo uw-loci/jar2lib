@@ -30,10 +30,205 @@ else(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 target_link_libraries($projectId jace)
-#foreach ($sourceFile in $sourceFiles)
 
+#foreach ($sourceFile in $sourceFiles)
 #set ($execName = $q.simpleName($sourceFile))
 #set ($sourceName = $sourceFile.getName())
 add_executable($execName source/$sourceName)
 target_link_libraries($execName $projectId jace "${JAVA_JVM_LIBRARY}")
 #end##foreach $sourceFile
+
+### post-build copies to dist dir ###
+if(NOT DEFINED Jar2Lib_JACE_DIR)
+  set(Jar2Lib_JACE_DIR jace)
+endif(NOT DEFINED Jar2Lib_JACE_DIR)
+
+if(NOT DEFINED Jar2Lib_DIST_DIR)
+  set(Jar2Lib_DIST_DIR dist/${projectId})
+endif(NOT DEFINED Jar2Lib_DIST_DIR)
+
+if(NOT DEFINED J2L_BUILD_TYPE)
+  set(J2L_BUILD_TYPE "")
+endif(NOT DEFINED J2L_BUILD_TYPE)
+
+if(NOT DEFINED J2L_LIB_PREFIX)
+  set(J2L_LIB_PREFIX lib)
+endif(NOT DEFINED J2L_LIB_PREFIX)
+
+if(APPLE)
+
+ if(NOT DEFINED J2L_SUFFIX)
+   set(J2L_SUFFIX .dylib)
+ endif(NOT DEFINED J2L_SUFFIX)
+
+ if(NOT DEFINED J2L_JNI_SUFFIX)
+   set(J2L_JNI_SUFFIX .jnilib)
+ endif(NOT DEFINED J2L_JNI_SUFFIX)
+
+ if(NOT DEFINED J2L_EXE_SUFFIX)
+   set(J2L_EXE_SUFFIX "")
+ endif(NOT DEFINED J2L_EXE_SUFFIX)
+
+endif(APPLE)
+
+if(UNIX)
+
+ if(NOT DEFINED J2L_SUFFIX)
+
+   set(J2L_SUFFIX .so)
+
+ endif(NOT DEFINED J2L_SUFFIX)
+
+ if(NOT DEFINED J2L_EXE_SUFFIX)
+   set(J2L_EXE_SUFFIX "")
+ endif(NOT DEFINED J2L_EXE_SUFFIX)
+
+endif(UNIX)
+
+if(WIN32)
+   set(J2L_LIB_PREFIX "")
+   set(J2L_BUILD_TYPE /Release)
+
+# Building in Debug mode is not currently supported in this script
+#  set(J2L_BUILD TYPE /Debug)
+
+  if(NOT DEFINED J2L_SUFFIX)
+
+    set(J2L_SUFFIX .dll)
+
+  endif(NOT DEFINED J2L_SUFFIX)
+
+ if(NOT DEFINED J2L_EXE_SUFFIX)
+   set(J2L_EXE_SUFFIX .exe)
+ endif(NOT DEFINED J2L_EXE_SUFFIX)
+
+endif(WIN32)
+
+if(WIN64)
+  set(J2L_LIB_PREFIX "")
+  set(J2L_BUILD_TYPE /Release)
+
+#  Builing with Debug mode on Windows is not currently supported in this script.
+#  set(J2L_BUILD TYPE /Debug)
+
+  if(NOT DEFINED J2L_SUFFIX)
+
+    set(J2L_SUFFIX .dll)
+
+  endif(NOT DEFINED J2L_SUFFIX)
+
+ if(NOT DEFINED J2L_EXE_SUFFIX)
+   set(J2L_SUFFIX )
+ endif(NOT DEFINED J2L_EXE_SUFFIX)
+
+endif(WIN64)
+
+
+if(APPLE)
+#make a .dylib version of libjace
+  add_custom_command(
+    TARGET ${projectId}
+    DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
+    VERBATIM
+  )
+
+  add_custom_command(
+    TARGET ${projectId}
+    DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    VERBATIM
+  )
+  install(FILES
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    DESTINATION "${Jar2Lib_DIST_DIR}"
+  )
+
+  add_custom_command(
+    TARGET ${projectId}
+    DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_JNI_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
+    VERBATIM
+  )
+  install(FILES
+    "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
+    DESTINATION "${Jar2Lib_DIST_DIR}"
+  )
+endif(APPLE)
+
+#copy jace
+add_custom_command(
+  TARGET ${projectId}
+  DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
+  DESTINATION "${Jar2Lib_DIST_DIR}"
+)
+
+#copy ${projectId}
+add_custom_command(
+  TARGET ${projectId}
+  DEPENDS "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
+  DESTINATION "${Jar2Lib_DIST_DIR}"
+)
+
+# copy jace_runtime.jar
+add_custom_command(
+  TARGET ${projectId}
+  DEPENDS "${CMAKE_BINARY_DIR}/../jace-runtime.jar"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/../jace-runtime.jar"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/jace-runtime.jar"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/jace-runtime.jar"
+  DESTINATION "${Jar2Lib_DIST_DIR}"
+)
+
+#foreach ($jarFile in $sourceJars)
+#set ($jarName = $jarFile.getName())
+# copy ${jarName}
+add_custom_command(
+  TARGET ${projectId}
+  DEPENDS "${jarFile}"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${jarFile}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${jarName}"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${jarName}"
+  DESTINATION "${Jar2Lib_DIST_DIR}"
+)
+
+#end##foreach $sourceJars
+
+SET(CPACK_PACKAGE_FILE_NAME "${projectId}")
+SET(CPACK_GENERATOR "TGZ;ZIP")
+INCLUDE( CPack )
