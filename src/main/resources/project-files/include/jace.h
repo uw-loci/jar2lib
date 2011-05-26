@@ -73,10 +73,4 @@ typedef jace::JArray<StringArray> StringArray2D;
 typedef jace::JArray<StringArray2D> StringArray3D;
 typedef jace::JArray<StringArray3D> StringArray4D;
 
-#include "jace/proxy/java/io/IOException.h"
-//using namespace jace::proxy::java::io;
-
-#include "jace/proxy/java/util/Hashtable.h"
-//using namespace jace::proxy::java::util;
-
 #endif
