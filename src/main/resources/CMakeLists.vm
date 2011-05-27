@@ -12,14 +12,18 @@ include(jace/Prerequisites.cmake)
 
 add_subdirectory(jace)
 
-include_directories(include "proxies/include" "jace/include"
+include_directories(include "proxies/include" "jace/include" "jtools/include"
   "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
 
 file(GLOB_RECURSE PROJECT_SRC "proxies/source/*.cpp")
 
+add_library(jtools SHARED "jtools/source/javaTools.cxx")
+
 add_library($projectId SHARED ${PROJECT_SRC})
 
 target_link_libraries($projectId jace)
+
+target_link_libraries(jtools jace)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set_target_properties($projectId PROPERTIES
@@ -28,8 +32,6 @@ else(CMAKE_COMPILER_IS_GNUCXX)
   set_target_properties($projectId PROPERTIES
     DEFINE_SYMBOL JACE_PROXY_EXPORTS)
 endif(CMAKE_COMPILER_IS_GNUCXX)
-
-target_link_libraries($projectId jace)
 
 #foreach ($sourceFile in $sourceFiles)
 #set ($execName = $q.simpleName($sourceFile))
@@ -192,6 +194,21 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
+  DESTINATION "${Jar2Lib_DIST_DIR}"
+)
+
+#copy jtools
+add_custom_command(
+  TARGET jtools
+  DEPENDS "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
   DESTINATION "${Jar2Lib_DIST_DIR}"
 )
 

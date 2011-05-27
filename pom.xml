@@ -87,6 +87,10 @@
     </developer>
   </developers>
 
+  <contributors>
+    <contributor><name>Mark Hiner</name></contributor>
+  </contributors>
+
   <!-- NB: for loci-base, in case of partial checkout -->
   <repositories>
     <repository>
