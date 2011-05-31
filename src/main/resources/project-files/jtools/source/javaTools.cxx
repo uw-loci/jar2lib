@@ -57,9 +57,9 @@ void JavaTools::createJVM()
   JavaTools::createJVM("", "", true, 256);
 }
 
-void JavaTools::createJVM(string classdir)
+void JavaTools::createJVM(string jarlist)
 {
-  JavaTools::createJVM(classdir, std::string(""), true, 256);
+  JavaTools::createJVM("", jarlist, true, 256);
 }
 
 void JavaTools::createJVM(int memory)
@@ -74,12 +74,12 @@ void JavaTools::createJVM(bool headless)
 
 void JavaTools::createJVM(string classdir, int memory)
 {
-  JavaTools::createJVM(classdir, std::string(""), true, memory);
+  JavaTools::createJVM(classdir, "", true, memory);
 }
 
 void JavaTools::createJVM(string classdir, bool headless)
 {
-  JavaTools::createJVM(classdir, std::string(""), headless, 256);
+  JavaTools::createJVM(classdir, "", headless, 256);
 }
 
 void JavaTools::createJVM(int memory, string jarlist)
@@ -89,7 +89,7 @@ void JavaTools::createJVM(int memory, string jarlist)
 
 void JavaTools::createJVM(bool headless, string jarlist)
 {
-  JavaTools::createJVM("",jarlist, headless, 256);
+  JavaTools::createJVM("", jarlist, headless, 256);
 }
 
 void JavaTools::createJVM(string classdir, string jarlist)
@@ -107,6 +107,7 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless)
   JavaTools::createJVM(classdir, jarlist, headless, 256);
 }
 
+//TODO: Add option override java library path
 void JavaTools::createJVM(string classdir, string jarlist, bool headless, int memory)
 {
 
@@ -124,11 +125,8 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless, int me
 
       std::string classpath ("");
 
-      classpath += classdir + "jace-runtime.jar" + PATHSTEP;
-      classpath += classdir + "loci_tools.jar" + PATHSTEP;
-      classpath += classdir + "bio-formats.jar";
-
-      std::cout << "Classpath for JVM: " << classpath << std::endl;
+      //TODO: Add all Jar2Lib classpath jars to this list by default (by template? by txt file?)
+      classpath += classdir + "jace-runtime.jar";
 
       if(jarlist.length() >= 1)
       {
@@ -148,6 +146,10 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless, int me
         classpath += classdir + jarlist.substr(0, found);
       }
 
+      std::cout << "jarlist : " << jarlist << std::endl;
+
+      std::cout << "Classpath for JVM: " << classpath << std::endl;
+
       list.push_back(jace::ClassPath(
       classpath
       ));
@@ -162,10 +164,6 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless, int me
 
       if (headless)
         list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-      else
-        list.push_back(jace::CustomOption("-Djava.awt.headless=false"));
-
-      list.push_back(jace::CustomOption("-Djava.library.path=" + classpath));
       //list.push_back(jace::CustomOption("-verbose"));
       //list.push_back(jace::CustomOption("-verbose:jni"));
       jace::helper::createVm(loader, list, false);

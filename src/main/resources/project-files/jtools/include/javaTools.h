@@ -69,7 +69,7 @@ class JavaTools
     /**
      * This method is used to instantiate a JVM with a custom class path.
      */
-    static void createJVM(string classdir);
+    static void createJVM(string jarlist);
 
     /**
      * This method is used to instantiate a JVM with custom memory specifications.
