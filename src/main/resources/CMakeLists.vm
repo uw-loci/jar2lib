@@ -37,7 +37,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 #set ($execName = $q.simpleName($sourceFile))
 #set ($sourceName = $sourceFile.getName())
 add_executable($execName source/$sourceName)
-target_link_libraries($execName $projectId jace "${JAVA_JVM_LIBRARY}")
+target_link_libraries($execName $projectId jtools jace "${JAVA_JVM_LIBRARY}")
 #end##foreach $sourceFile
 
 ### post-build copies to dist dir ###
