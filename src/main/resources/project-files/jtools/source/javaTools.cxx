@@ -108,6 +108,9 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless)
 }
 
 //TODO: Add option override java library path
+/**
+* jarlist is a semi-colon-separated list of additional jars to include
+**/
 void JavaTools::createJVM(string classdir, string jarlist, bool headless, int memory)
 {
 
@@ -125,8 +128,38 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless, int me
 
       std::string classpath ("");
 
-      //TODO: Add all Jar2Lib classpath jars to this list by default (by template? by txt file?)
       classpath += classdir + "jace-runtime.jar";
+
+      DIR *d;
+      struct dirent *dir;
+
+      if(classdir.length() >= 1)
+      {
+        string tmp_dir(classdir);
+        tmp_dir += "jar";
+        d = opendir(tmp_dir.c_str());
+      }
+      else
+      {
+        d = opendir("./jar");
+      }
+
+      if(d)
+      {
+        while ((dir = readdir(d)) != NULL)
+        {
+          string tmp_name(dir->d_name);
+
+          if(tmp_name.compare(".") != 0 && tmp_name.compare("..") !=0)
+          {
+            classpath += PATHSTEP;
+            classpath += classdir + "jar" + SLASH + dir->d_name;
+          }
+        }
+
+        closedir(d);
+      }
+
 
       if(jarlist.length() >= 1)
       {
@@ -146,9 +179,8 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless, int me
         classpath += classdir + jarlist.substr(0, found);
       }
 
-      std::cout << "jarlist : " << jarlist << std::endl;
-
-      std::cout << "Classpath for JVM: " << classpath << std::endl;
+      //std::cout << "jarlist : " << jarlist << std::endl;
+      //std::cout << "Classpath for JVM: " << classpath << std::endl;
 
       list.push_back(jace::ClassPath(
       classpath

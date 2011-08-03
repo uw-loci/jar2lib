@@ -39,6 +39,7 @@ your combined work must be distributed under the terms of the GPL.
 */
 
 #include <string>
+#include <dirent.h>
 #include <iostream>
 #include "jace.h"
 #include "jace/JNIHelper.h"
