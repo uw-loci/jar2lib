@@ -8,16 +8,13 @@ cmake_minimum_required(VERSION 2.8)
 
 project($projectId)
 
-include(jace/Prerequisites.cmake)
+include(jace/CMakeLists.txt)
 
-add_subdirectory(jace)
+include_directories("${PROJECT_SOURCE_DIR}/include" "${PROJECT_SOURCE_DIR}/proxies/include" "${PROJECT_SOURCE_DIR}/jace/include" "${PROJECT_SOURCE_DIR}/jtools/include" "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
 
-include_directories(include "proxies/include" "jace/include" "jtools/include"
-  "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
+file(GLOB_RECURSE PROJECT_SRC "${PROJECT_SOURCE_DIR}/proxies/source/*.cpp")
 
-file(GLOB_RECURSE PROJECT_SRC "proxies/source/*.cpp")
-
-add_library(jtools SHARED "jtools/source/javaTools.cxx")
+add_library(jtools SHARED "${PROJECT_SOURCE_DIR}/jtools/source/javaTools.cxx")
 
 add_library($projectId SHARED ${PROJECT_SRC})
 
@@ -40,9 +37,19 @@ add_executable($execName source/$sourceName)
 target_link_libraries($execName $projectId jtools jace "${JAVA_JVM_LIBRARY}")
 #end##foreach $sourceFile
 
-### post-build copies to dist dir ###
+# ---HACK--- Force linker to check working directory for libraries on Unix
+if(UNIX)
+target_link_libraries(jtools -Wl,-rpath,.)
+target_link_libraries($projectId -Wl,-rpath,.)
+#foreach ($sourceFile in $sourceFiles)
+#set ($execName = $q.simpleName($sourceFile))
+target_link_libraries($execName -Wl,-rpath,.)
+#end##foreach $sourceFile
+endif(UNIX)
+
+# post-build copies to dist dir
 if(NOT DEFINED Jar2Lib_JACE_DIR)
-  set(Jar2Lib_JACE_DIR jace)
+# set(Jar2Lib_JACE_DIR jace)
 endif(NOT DEFINED Jar2Lib_JACE_DIR)
 
 if(NOT DEFINED Jar2Lib_PROXY_DIR)
@@ -73,6 +80,7 @@ if(NOT DEFINED J2L_LIB_PREFIX)
   set(J2L_LIB_PREFIX lib)
 endif(NOT DEFINED J2L_LIB_PREFIX)
 
+# Set the appropriate file extension for libraries on each system
 if(APPLE)
 
  if(NOT DEFINED J2L_SUFFIX)
@@ -183,7 +191,7 @@ if(APPLE)
   )
 endif(APPLE)
 
-#copy jace
+# copy jace
 add_custom_command(
   TARGET ${projectId}
   DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace${J2L_SUFFIX}"
@@ -198,7 +206,7 @@ install(FILES
   DESTINATION "."
 )
 
-#copy ${projectId}
+# copy ${projectId}
 add_custom_command(
   TARGET ${projectId}
   DEPENDS "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
@@ -209,7 +217,7 @@ add_custom_command(
   VERBATIM
 )
 
-#copy jtools
+# copy jtools
 add_custom_command(
   TARGET jtools
   DEPENDS "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
@@ -285,6 +293,17 @@ install(DIRECTORY
   DESTINATION "./${Jar2Lib_DEPS_DIR}/"
 )
 
+# copy dependencies to build directory
+add_custom_command(
+  TARGET ${projectId}
+  DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DEPS_DIR}"
+  VERBATIM
+)
+
 # copy dependency headers
 add_custom_command(
   TARGET ${projectId}
@@ -311,6 +330,25 @@ install(DIRECTORY
   DESTINATION "./include"
 )
 
+# ---HACK--- install(TARGETS ...) destroys linking on Linux but allows portability on OSX
+if(UNIX)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
+  DESTINATION "."
+)
+
+#foreach ($sourceFile in $sourceFiles)
+#set ($execName = $q.simpleName($sourceFile))
+install(PROGRAMS
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${execName}"
+  DESTINATION "."
+)
+#end##foreach $sourceFile
+endif(UNIX)
+
+if(APPLE)
 # install targets
 install(TARGETS
   jtools
@@ -323,6 +361,22 @@ install(TARGETS
   LIBRARY DESTINATION .
   ARCHIVE DESTINATION .
 )
+endif(APPLE)
+
+if(WIN32)
+# install targets
+install(TARGETS
+  jtools
+  ${projectId}
+#foreach ($sourceFile in $sourceFiles)
+#set ($execName = $q.simpleName($sourceFile))
+  ${execName}
+#end##foreach $sourceFile
+  RUNTIME DESTINATION .
+  LIBRARY DESTINATION .
+  ARCHIVE DESTINATION .
+)
+endif(WIN32)
 
 SET(CPACK_PACKAGE_FILE_NAME "${projectId}")
 SET(CPACK_GENERATOR "TGZ;ZIP")

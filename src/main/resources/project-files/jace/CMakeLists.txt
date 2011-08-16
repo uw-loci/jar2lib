@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(jace)
 
-include(Prerequisites.cmake)
+include(jace/Prerequisites.cmake)
 
 ### build Jace C++ library ###
 
@@ -16,7 +16,7 @@ include_directories("include"
   "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}"
   "${Boost_INCLUDE_DIR}")
 
-file(GLOB_RECURSE JACE_SRC "source/*.cpp")
+file(GLOB_RECURSE JACE_SRC "jace/source/*.cpp")
 
 add_library(jace SHARED ${JACE_SRC})
 
