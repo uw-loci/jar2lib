@@ -50,70 +50,62 @@ your combined work must be distributed under the terms of the GPL.
 #define SLASH '/'
 #endif
 
+#ifdef __APPLE__
+#define PATH "DYLD_LIBRARY_PATH"
+#endif
+#ifdef __linux__
+#define PATH "LD_LIBRARY_PATH"
+#endif
+#ifdef _WIN32
+#define PATH "PATH"
+#endif
+#ifdef _WIN64
+#define PATH "PATH"
+#endif
+
 using namespace std;
 
 void JavaTools::createJVM()
 {
-  JavaTools::createJVM("", "", true, 256);
+  JavaTools::createJVM("jar", true, 256, vector<string>(), vector<string>(), vector<string>());
 }
 
-void JavaTools::createJVM(string jarlist)
+void JavaTools::createJVM(string jarFolder)
 {
-  JavaTools::createJVM("", jarlist, true, 256);
+  JavaTools::createJVM(jarFolder, true, 256, vector<string>(), vector<string>(), vector<string>());
 }
 
 void JavaTools::createJVM(int memory)
 {
-  JavaTools::createJVM("", "", true, memory);
+  JavaTools::createJVM("jar", true, memory, vector<string>(), vector<string>(), vector<string>());
 }
 
 void JavaTools::createJVM(bool headless)
 {
-  JavaTools::createJVM("", "", headless, 256);
+  JavaTools::createJVM("jar", headless, 256, vector<string>(), vector<string>(), vector<string>());
 }
 
-void JavaTools::createJVM(string classdir, int memory)
+void JavaTools::createJVM(bool headless, int memory)
 {
-  JavaTools::createJVM(classdir, "", true, memory);
+  JavaTools::createJVM("jar", headless, memory, vector<string>(), vector<string>(), vector<string>());
 }
 
-void JavaTools::createJVM(string classdir, bool headless)
+void JavaTools::createJVM(string jarFolder, bool headless, int memory)
 {
-  JavaTools::createJVM(classdir, "", headless, 256);
+  JavaTools::createJVM(jarFolder, headless, memory, vector<string>(), vector<string>(), vector<string>());
 }
 
-void JavaTools::createJVM(int memory, string jarlist)
-{
-  JavaTools::createJVM("", jarlist, true, memory);
-}
-
-void JavaTools::createJVM(bool headless, string jarlist)
-{
-  JavaTools::createJVM("", jarlist, headless, 256);
-}
-
-void JavaTools::createJVM(string classdir, string jarlist)
-{
-  JavaTools::createJVM(classdir, jarlist, true, 256);
-}
-
-void JavaTools::createJVM(string classdir, string jarlist, int memory)
-{
-  JavaTools::createJVM(classdir, jarlist, true, memory);
-}
-
-void JavaTools::createJVM(string classdir, string jarlist, bool headless)
-{
-  JavaTools::createJVM(classdir, jarlist, headless, 256);
-}
-
-//TODO: Add option override java library path
 /**
-* jarlist is a semi-colon-separated list of additional jars to include
-**/
-void JavaTools::createJVM(string classdir, string jarlist, bool headless, int memory)
+ * jarFolder is the name of the path to a directory of jars to be added to the classpath (default: jar)
+ * headless turns headless on or off for JVM instantiation (default: on)
+ * memory controls memory for instantiation of JVM in MB (default: 256)
+ * extraClasspath is a list of additional classpath entries to include
+ * extraJavaLibraryPath is a list of path entries to be appended to the JVM's java.library.path. ( default: .)
+ * extraOptions is a list of any other desired arguments to the JVM, added to the jace::OptionList (e.g., "-verbose:jni")
+ */
+void JavaTools::createJVM(string jarFolder, bool headless, int memory,
+  vector<string> extraClasspath, vector<string> extraJavaLibraryPath, vector<string> extraOptions)
 {
-
   try {
     jace::StaticVmLoader* tmpLoader = (jace::StaticVmLoader*)jace::helper::getVmLoader();
     if(tmpLoader == NULL) {
@@ -122,71 +114,83 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless, int me
       jace::OptionList list;
       jace::StaticVmLoader loader(JNI_VERSION_1_4);
 
-      if(classdir.length() >= 1 && classdir.at(classdir.length() - 1) != SLASH ) {
-        classdir.append(1,SLASH);
-      }
-
-      std::string classpath ("");
-
-      classpath += classdir + "jace-runtime.jar";
+      string classpath ("");
 
       DIR *d;
       struct dirent *dir;
 
-      if(classdir.length() >= 1)
-      {
-        string tmp_dir(classdir);
-        tmp_dir += "jar";
-        d = opendir(tmp_dir.c_str());
-      }
-      else
-      {
-        d = opendir("./jar");
-      }
+//TODO: test jar/*
+      // All .jar files in the jarFolder are added to the JVM's classpath
+      d = opendir(jarFolder.c_str());
 
       if(d)
       {
         while ((dir = readdir(d)) != NULL)
         {
-          string tmp_name(dir->d_name);
+          string tmpName(dir->d_name);
 
-          if(tmp_name.compare(".") != 0 && tmp_name.compare("..") !=0)
+          if(tmpName.find(".jar") != string::npos)
           {
-            classpath += PATHSTEP;
-            classpath += classdir + "jar" + SLASH + dir->d_name;
+            if(classpath.length() >= 1)
+            {
+              classpath += PATHSTEP;
+            }
+            classpath += jarFolder + SLASH + dir->d_name;
           }
         }
 
         closedir(d);
       }
 
-
-      if(jarlist.length() >= 1)
+      // All items in the extraClasspath are added to the JVM's classpath
+      if(!extraClasspath.empty())
       {
-        classpath += PATHSTEP;
-
-        size_t found;
-        found = jarlist.find_first_of(";");
-        while(found != string::npos)
+        for(vector<string>::iterator it = extraClasspath.begin(); it != extraClasspath.end(); it++)
         {
-          classpath += classdir + jarlist.substr(0, found) + PATHSTEP;
-
-          jarlist = jarlist.substr(found + 1, jarlist.length());
-
-          found = jarlist.find_first_of(";");
+          classpath += PATHSTEP;
+          classpath += *it;
         }
-
-        classpath += classdir + jarlist.substr(0, found);
       }
 
-      //std::cout << "jarlist : " << jarlist << std::endl;
+      //std::cout << "extraClasspath : " << extraClasspath << std::endl;
       //std::cout << "Classpath for JVM: " << classpath << std::endl;
 
-      list.push_back(jace::ClassPath(
-      classpath
-      ));
+      // Gets the system-specific path environment variable's contents (which will eventually be passed to java.library.path in this JVM)
+      std::string pName = PATH;
+      char * libPath;
+      libPath = getenv(pName.c_str());
+      std::string jLibPath("");
+      if(libPath != NULL)
+      {
+        jLibPath = libPath;
+      }
+
+      // If no extra Java library path is specified, the current working directory is appended and passed to java.library.path.
+      // Otherwise, each provided path is appended.
+      if(extraJavaLibraryPath.empty())
+      {
+        if(jLibPath.length() >= 1)
+        {
+          jLibPath += PATHSTEP;
+        }
+        jLibPath += '.';
+      }
+      else
+      {
+        for(vector<string>::iterator it = extraJavaLibraryPath.begin(); it != extraJavaLibraryPath.end(); it++)
+        {
+          if(jLibPath.length() >= 1)
+          {
+           jLibPath += PATHSTEP;
+          }
+          jLibPath += *it;
+        }
+      }
+
+      list.push_back(jace::ClassPath(classpath));
       list.push_back(jace::CustomOption("-Xcheck:jni"));
 
+      // Int to string conversion
       std::string mem;
       std::stringstream out;
       out << memory;
@@ -195,9 +199,20 @@ void JavaTools::createJVM(string classdir, string jarlist, bool headless, int me
       list.push_back(jace::CustomOption("-Xmx" + mem + "m"));
 
       if (headless)
+      {
         list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-      //list.push_back(jace::CustomOption("-verbose"));
-      //list.push_back(jace::CustomOption("-verbose:jni"));
+      }
+
+      list.push_back(jace::CustomOption("-Djava.library.path=" + jLibPath));
+
+      // All extra options are added as CustomOptions for JVM instantiation
+      if (!extraOptions.empty()) {
+        for (vector<string>::iterator it = extraOptions.begin(); it != extraOptions.end(); it++)
+        {
+          list.push_back(jace::CustomOption(*it));
+        }
+      }
+
       jace::helper::createVm(loader, list, false);
     }
   }

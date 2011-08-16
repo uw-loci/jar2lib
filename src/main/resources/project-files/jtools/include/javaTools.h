@@ -39,6 +39,7 @@ your combined work must be distributed under the terms of the GPL.
 */
 
 #include <string>
+#include <vector>
 #include <dirent.h>
 #include <iostream>
 #include "jace.h"
@@ -60,69 +61,40 @@ class JavaTools
 
     /**
      * This method is used to instantiate a JVM with the following defaults:
-     * class path: working directory
-     * extra jars: none
+     * jarFolder: jar
      * memory: 256MB
      * headless: true
+     * extraJavaLibraryPath: current working directory
+     * extraClasspath: none
      */
     static void createJVM();
 
     /**
      * This method is used to instantiate a JVM with a custom class path.
      */
-    static void createJVM(string jarlist);
+    static void createJVM(string jarFolder);
 
     /**
      * This method is used to instantiate a JVM with custom memory specifications.
      */
-    static void createJVM(int memory);
+    static void createJVM(bool headless);
 
     /**
      * This method is used to instantiate a JVM with specified headless mode.
      */
-    static void createJVM(bool headless);
+    static void createJVM(int memory);
 
     /**
      * This method is used to instantiate a JVM with a custom class path and
      * memory specifications..
      */
-    static void createJVM(string classdir, int memory);
+    static void createJVM(bool headless, int memory);
 
     /**
      * This method is used to instantiate a JVM with a custom class path and
      * specified headless mode.
      */
-    static void createJVM(string classdir, bool headless);
-
-    /**
-     * This method is used to instantiate a JVM with extra jars and
-     * memory specifications..
-     */
-    static void createJVM(int memory, string jarlist);
-
-    /**
-     * This method is used to instantiate a JVM with extra jars and
-     * specified headless mode.
-     */
-    static void createJVM(bool headless, string jarlist);
-
-    /**
-     * This method is used to instantiate a JVM with a custom class path and
-     * additional jars.
-     */
-    static void createJVM(string classdir, string jarlist);
-
-    /**
-     * This method is used to instantiate a JVM with a custom class path,
-     * extra jars and custom memory specifications.
-     */
-    static void createJVM(string classdir, string jarlist, int memory);
-
-    /**
-     * This method is used to instantiate a JVM with a custom class path,
-     * extra jars and specified headless mode.
-     */
-    static void createJVM(string classdir, string jarlist, bool headless);
+    static void createJVM(string jarFolder, bool headless, int memory);
 
     /**
      * This method is the fundamental JVM creation method.
@@ -132,5 +104,5 @@ class JavaTools
      * headless - whether to run headless or not
      * memory - how much memory to instantiate the JVM with
      */
-    static void createJVM(string classdir, string jarlist, bool headless, int memory);
+    static void createJVM(string jarFolder, bool headless, int memory, vector<string> extraClasspath, vector<string> extraJavaLibraryPath, vector<string> extraOptions);
 };
