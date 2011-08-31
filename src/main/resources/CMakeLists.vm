@@ -331,22 +331,6 @@ install(DIRECTORY
 )
 
 # ---HACK--- install(TARGETS ...) destroys linking on Linux but allows portability on OSX
-if(UNIX)
-install(FILES
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
-  DESTINATION "."
-)
-
-#foreach ($sourceFile in $sourceFiles)
-#set ($execName = $q.simpleName($sourceFile))
-install(PROGRAMS
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${execName}"
-  DESTINATION "."
-)
-#end##foreach $sourceFile
-endif(UNIX)
 
 if(APPLE)
 # install targets
@@ -361,9 +345,7 @@ install(TARGETS
   LIBRARY DESTINATION .
   ARCHIVE DESTINATION .
 )
-endif(APPLE)
-
-if(WIN32)
+elseif(WIN32 OR WIN64)
 # install targets
 install(TARGETS
   jtools
@@ -376,7 +358,23 @@ install(TARGETS
   LIBRARY DESTINATION .
   ARCHIVE DESTINATION .
 )
-endif(WIN32)
+else(APPLE)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}${J2L_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools${J2L_SUFFIX}"
+  DESTINATION "."
+)
+
+#foreach ($sourceFile in $sourceFiles)
+#set ($execName = $q.simpleName($sourceFile))
+install(PROGRAMS
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${execName}"
+  DESTINATION "."
+)
+#end##foreach $sourceFile
+endif(APPLE)
+
 
 SET(CPACK_PACKAGE_FILE_NAME "${projectId}")
 SET(CPACK_GENERATOR "TGZ;ZIP")
