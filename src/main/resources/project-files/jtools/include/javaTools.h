@@ -48,13 +48,23 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/JNIException.h"
 #include "jace/OptionList.h"
 
+#ifdef WIN32
+  #ifndef MYAPI_API
+    #define MYAPI_API __declspec(dllexport)
+  #endif
+#else
+  #ifndef MYAPI_API
+    #define MYAPI_API
+  #endif
+#endif
+
 using namespace std;
 
 /**
  * JavaTools provides static helper methods used in more than one
  * of the various BFITK plugin implementations.
  */
-class JavaTools
+class MYAPI_API JavaTools
 {
   public:
     typedef JavaTools      Self;

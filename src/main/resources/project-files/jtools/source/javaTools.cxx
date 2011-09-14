@@ -42,6 +42,112 @@ your combined work must be distributed under the terms of the GPL.
 #include <sstream>
 #include "javaTools.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
+
+#ifdef WIN32
+#include <windows.h>
+#include <errno.h>
+#define mkdir fake_posix_mkdir
+static int fake_posix_mkdir(const char *name)
+{
+          return mkdir(name);
+}
+
+static void die(const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  va_end(ap);
+  fputc('\n', stderr);
+
+  exit(1);
+}
+
+static void *xcalloc(size_t size, size_t nmemb)
+{
+  void *result = calloc(size, nmemb);
+  if (!result)
+    die("Out of memory");
+
+  return result;
+}
+
+static void string_release(std::string *string)
+{
+  if (string) {
+    free(string);
+  }
+}
+
+struct entry {
+  char d_name[PATH_MAX];
+  int d_namlen;
+} entry;
+
+struct dir {
+  std::string pattern;
+  HANDLE handle;
+  WIN32_FIND_DATA find_data;
+  int done;
+  struct entry entry;
+};
+
+struct dir *open_dir(const char *path)
+{
+  struct dir *result = (dir*)xcalloc(sizeof(struct dir), 1);
+  if (!result)
+    return result;
+/*
+  result->pattern = (std::string*)malloc(strlen(path) + 3);
+  if (!result->pattern) {
+    errno = ENOMEM;
+    return NULL;
+  }
+*/
+  result->pattern.assign(path);
+  result->pattern.append(".*");
+  result->handle = FindFirstFile(result->pattern.c_str(), &(result->find_data));
+  if (result->handle == INVALID_HANDLE_VALUE) {
+    //free(result->pattern);
+    free(result);
+    return NULL;
+  }
+  result->done = 0;
+  return result;
+}
+
+struct entry *read_dir(struct dir *dir)
+{
+  if (dir->done)
+    return NULL;
+  strcpy(dir->entry.d_name, dir->find_data.cFileName);
+  dir->entry.d_namlen = strlen(dir->entry.d_name);
+  if (FindNextFile(dir->handle, &dir->find_data) == 0)
+    dir->done = 1;
+  return &dir->entry;
+}
+
+int close_dir(struct dir *dir)
+{
+  //string_release(dir->pattern);
+  FindClose(dir->handle);
+  free(dir);
+  return 0;
+}
+
+#define DIR struct dir
+#define dirent entry
+#define opendir open_dir
+#define readdir read_dir
+#define closedir close_dir
+#else
+#include <dirent.h>
+#endif
+
 #if defined (_WIN32)
 #define PATHSTEP ';'
 #define SLASH '\\'
