@@ -53,11 +53,11 @@ if(NOT DEFINED Jar2Lib_JACE_DIR)
 endif(NOT DEFINED Jar2Lib_JACE_DIR)
 
 if(NOT DEFINED Jar2Lib_PROXY_DIR)
-  set(Jar2Lib_PROXY_DIR ../proxies)
+  set(Jar2Lib_PROXY_DIR /proxies)
 endif(NOT DEFINED Jar2Lib_PROXY_DIR)
 
 if(NOT DEFINED Jar2Lib_INCLDE_DIR)
-  set(Jar2Lib_INCLDE_DIR ../include)
+  set(Jar2Lib_INCLDE_DIR ${CMAKE_SOURCE_DIR}/include)
 endif(NOT DEFINED Jar2Lib_INCLDE_DIR)
 
 if(NOT DEFINED Jar2Lib_DEPS_DIR)
@@ -69,7 +69,7 @@ if(NOT DEFINED Jar2Lib_DIST_DIR)
 endif(NOT DEFINED Jar2Lib_DIST_DIR)
 
 if(NOT DEFINED Jar2Lib_DEPS_SRC)
-  set(Jar2Lib_DEPS_SRC ../../dependency)
+  set(Jar2Lib_DEPS_SRC ../dependency)
 endif(NOT DEFINED Jar2Lib_DEPS_SRC)
 
 if(NOT DEFINED J2L_BUILD_TYPE)
@@ -82,7 +82,6 @@ endif(NOT DEFINED J2L_LIB_PREFIX)
 
 # Set the appropriate file extension for libraries on each system
 if(APPLE)
-
  if(NOT DEFINED J2L_SUFFIX)
    set(J2L_SUFFIX .dylib)
  endif(NOT DEFINED J2L_SUFFIX)
@@ -98,7 +97,6 @@ if(APPLE)
 endif(APPLE)
 
 if(UNIX)
-
  if(NOT DEFINED J2L_SUFFIX)
 
    set(J2L_SUFFIX .so)
@@ -228,6 +226,55 @@ add_custom_command(
   VERBATIM
 )
 
+# if Windows, need to copy the export libraries as well
+if(WIN32)
+# copy jace
+add_custom_command(
+  TARGET ${projectId}
+  DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace.lib"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_JACE_DIR}${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jace.lib"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace.lib"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jace.lib"
+  DESTINATION "."
+)
+
+# copy ${projectId}
+add_custom_command(
+  TARGET ${projectId}
+  DEPENDS "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}${projectId}.lib"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}${projectId}.lib"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}.lib"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}${projectId}.lib"
+  DESTINATION "."
+)
+
+# copy jtools
+add_custom_command(
+  TARGET jtools
+  DEPENDS "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jtools.lib"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${J2L_BUILD_TYPE}/${J2L_LIB_PREFIX}jtools.lib"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools.lib"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${J2L_LIB_PREFIX}jtools.lib"
+  DESTINATION "."
+)
+
+endif(WIN32)
+
 # copy jace_runtime.jar
 add_custom_command(
   TARGET ${projectId}
@@ -268,11 +315,11 @@ install(FILES
 #set ($sourceName = $sourceFile.getName())
 add_custom_command(
   TARGET ${execName}
-  DEPENDS "${CMAKE_BINARY_DIR}/${execName}"
+  DEPENDS "${CMAKE_BINARY_DIR}/${execName}${J2L_EXE_SUFFIX}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${execName}"
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${execName}"
+  "${CMAKE_BINARY_DIR}/${execName}${J2L_EXE_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${execName}${J2L_EXE_SUFFIX}"
   VERBATIM
 )
 #end##foreach $sourceFile
@@ -280,10 +327,10 @@ add_custom_command(
 # copy and install dependencies
 add_custom_command(
   TARGET ${projectId}
-  DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_DEPS_SRC}"
+  DEPENDS "${CMAKE_SOURCE_DIR}/${Jar2Lib_DEPS_SRC}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_DEPS_SRC}"
+  "${CMAKE_SOURCE_DIR}/${Jar2Lib_DEPS_SRC}"
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/"
   VERBATIM
 )
@@ -300,7 +347,7 @@ add_custom_command(
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/"
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_DEPS_DIR}"
+  "${CMAKE_BINARY_DIR}${J2L_BUILD_TYPE}/${Jar2Lib_DEPS_DIR}"
   VERBATIM
 )
 
@@ -317,10 +364,10 @@ add_custom_command(
 # copy and install proxies
 add_custom_command(
   TARGET ${projectId}
-  DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_PROXY_DIR}"
+  DEPENDS "${CMAKE_SOURCE_DIR}/${Jar2Lib_PROXY_DIR}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
-  "${CMAKE_BINARY_DIR}/${Jar2Lib_PROXY_DIR}/include"
+  "${CMAKE_SOURCE_DIR}/${Jar2Lib_PROXY_DIR}/include"
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/include"
   VERBATIM
 )
