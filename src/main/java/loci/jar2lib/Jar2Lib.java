@@ -232,7 +232,7 @@ public class Jar2Lib {
     ArrayList<String> tmpArray = new ArrayList<String>();
 
     for(String libPath : libraryJars) {
-      tmpArray.add(libPath.replace("\\", "/"));
+      tmpArray.add(libPath.replace("\\\\", "/"));
     }
     setLibraryJars(tmpArray);
   }
