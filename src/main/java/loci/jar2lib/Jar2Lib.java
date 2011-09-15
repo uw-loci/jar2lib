@@ -229,10 +229,10 @@ public class Jar2Lib {
   * Converts "\\" to "/" in all library paths, making them platform safe for CMakeLists.txt files
   */
   public void fixLibraryPaths() {
-    ArrayList<String> tmpArray = new ArrayList<String>();
+    List<String> tmpArray = new ArrayList<String>();
 
     for(String libPath : libraryJars) {
-      tmpArray.add(libPath.replace("\\\\", "/"));
+      tmpArray.add(libPath.replaceAll("\\\\", "/"));
     }
     setLibraryJars(tmpArray);
   }
