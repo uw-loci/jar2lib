@@ -197,7 +197,7 @@ public class Jar2Lib {
     	  corePath = args[++i];
       }
       else if (arg.startsWith("-")) die("Unknown flag: " + arg);
-      else libraryJars.add(arg);
+      else libraryJars.add(arg.replace("\\", "/"));
     }
     if (projectId == null || projectName == null || libraryJars.size() == 0) {
       die("Usage: java " + getClass().getName() + " projectId projectName\n" +

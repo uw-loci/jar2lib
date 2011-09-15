@@ -293,7 +293,6 @@ install(FILES
 #foreach ($jarFile in $sourceJars)
 #set ($jarName = $jarFile.getName())
 # copy ${jarName}
-STRING(REGEX REPLACE "\\\\" "/" J2L_JAR_NAME ${jarFile})
 add_custom_command(
   TARGET ${projectId}
   DEPENDS "${J2L_JAR_NAME}"
