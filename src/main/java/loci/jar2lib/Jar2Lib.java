@@ -197,7 +197,7 @@ public class Jar2Lib {
     	  corePath = args[++i];
       }
       else if (arg.startsWith("-")) die("Unknown flag: " + arg);
-      else libraryJars.add(arg.replace("\\\\", "/"));
+      else libraryJars.add(arg);
     }
     if (projectId == null || projectName == null || libraryJars.size() == 0) {
       die("Usage: java " + getClass().getName() + " projectId projectName\n" +
@@ -214,6 +214,7 @@ public class Jar2Lib {
     validateInputs();
     generateSkeleton();
     copySourceFiles();
+    fixLibraryPaths();
     generateHeaders();
     generateProxies();
     fixConflicts();
@@ -222,6 +223,18 @@ public class Jar2Lib {
     // TODO - copy "final product" files such as wrapped JARs to build dir
 
     log("--> Done");
+  }
+
+ /**
+  * Converts "\\" to "/" in all library paths, making them platform safe for CMakeLists.txt files
+  */
+  public void fixLibraryPaths() {
+    ArrayList<String> tmpArray = new ArrayList<String>();
+
+    for(String libPath : libraryJars) {
+      tmpArray.add(libPath.replace("\\", "/"));
+    }
+    setLibraryJars(tmpArray);
   }
 
   /**
