@@ -197,7 +197,7 @@ public class Jar2Lib {
     	  corePath = args[++i];
       }
       else if (arg.startsWith("-")) die("Unknown flag: " + arg);
-      else libraryJars.add(arg);
+      else libraryJars.add(arg.replace('\\', '/'));
     }
     if (projectId == null || projectName == null || libraryJars.size() == 0) {
       die("Usage: java " + getClass().getName() + " projectId projectName\n" +
@@ -214,7 +214,6 @@ public class Jar2Lib {
     validateInputs();
     generateSkeleton();
     copySourceFiles();
-    correctJarPaths();
     generateHeaders();
     generateProxies();
     fixConflicts();
@@ -223,19 +222,6 @@ public class Jar2Lib {
     // TODO - copy "final product" files such as wrapped JARs to build dir
 
     log("--> Done");
-  }
-
-  /**
-   * Replaces instances of '\' in the jar paths with '/'
-   */
-  public void correctJarPaths() {
-
-    ArrayList<String> tmpLibJars = new ArrayList<String>();
-
-    for (String jarPath : libraryJars) {
-      tmpLibJars.add(jarPath.replace('\\', '/'));
-    }
-    setLibraryJars(tmpLibJars); 
   }
 
   /**
