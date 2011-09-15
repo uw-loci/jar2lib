@@ -295,10 +295,10 @@ install(FILES
 # copy ${jarName}
 add_custom_command(
   TARGET ${projectId}
-  DEPENDS "${J2L_JAR_NAME}"
+  DEPENDS "${jarFile}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${J2L_JAR_NAME}"
+  "${jarFile}"
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/${jarName}"
   VERBATIM
 )
