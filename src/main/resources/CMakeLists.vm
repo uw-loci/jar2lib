@@ -293,6 +293,7 @@ install(FILES
 #foreach ($jarFile in $sourceJars)
 #set ($jarName = $jarFile.getName())
 # copy ${jarName}
+STRING(REGEX REPLACE "\\\\" "/" jarName ${jarName})
 add_custom_command(
   TARGET ${projectId}
   DEPENDS "${jarFile}"
