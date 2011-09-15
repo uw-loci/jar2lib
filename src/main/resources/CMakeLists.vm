@@ -293,13 +293,13 @@ install(FILES
 #foreach ($jarFile in $sourceJars)
 #set ($jarName = $jarFile.getName())
 # copy ${jarName}
-STRING(REGEX REPLACE "\\\\" "/" jarName ${jarName})
+STRING(REGEX REPLACE "\\\\" "/" J2L_JAR_NAME ${jarFile})
 add_custom_command(
   TARGET ${projectId}
-  DEPENDS "${jarFile}"
+  DEPENDS "${J2L_JAR_NAME}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${jarFile}"
+  "${J2L_JAR_NAME}"
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/${jarName}"
   VERBATIM
 )
