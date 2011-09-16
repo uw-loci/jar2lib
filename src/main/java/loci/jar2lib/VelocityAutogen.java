@@ -133,19 +133,12 @@ public class VelocityAutogen {
     // initialize Velocity
     VelocityEngine ve = VelocityTools.createEngine();
     VelocityContext context = VelocityTools.createContext();
-    
-    File[] libJars = new File[libraryJars.size()];
-    
-    for (int i = 0; i < libraryJars.size(); i++)
-    {
-    	libJars[i] = new File(libraryJars.get(i));
-    }
 
     context.put("headerBlock", scriptHeader);
     context.put("projectId", projectId);
     context.put("projectName", projectName);
     context.put("sourceFiles", sourceFiles);
-    context.put("sourceJars", libJars);
+    context.put("sourceJars", libraryJars.toArray(new String[libraryJars.size()]));
     context.put("q", this);
 
     // generate CMakeLists.txt file

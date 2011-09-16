@@ -291,7 +291,8 @@ install(FILES
 )
 
 #foreach ($jarFile in $sourceJars)
-#set ($jarName = $jarFile.getName())
+#set( $offset = $jarfile.lastIndexOf('/') + 1 )
+#set ($jarName = $jarFile.substring($offset) )
 # copy ${jarName}
 add_custom_command(
   TARGET ${projectId}
