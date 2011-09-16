@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 /**
  * Generates a C++ project for C++ proxies corresponding
  * to a list of Java JAR files.
@@ -232,6 +234,7 @@ public class Jar2Lib {
     List<String> tmpArray = new ArrayList<String>();
 
     for(String libPath : libraryJars) {
+      libPath = StringEscapeUtils.escapeJava(libPath);
       tmpArray.add(libPath.replaceAll("\\\\", "/"));
     }
     setLibraryJars(tmpArray);
