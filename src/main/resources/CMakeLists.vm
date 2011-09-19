@@ -114,7 +114,7 @@ if(WIN32)
    set(J2L_BUILD_TYPE /Release)
 
 # Building in Debug mode is not currently supported in this script
-#  set(J2L_BUILD TYPE /Debug)
+#  set(J2L_BUILD_TYPE /Debug)
 
   if(NOT DEFINED J2L_SUFFIX)
 
@@ -133,7 +133,7 @@ if(WIN64)
   set(J2L_BUILD_TYPE /Release)
 
 #  Builing with Debug mode on Windows is not currently supported in this script.
-#  set(J2L_BUILD TYPE /Debug)
+#  set(J2L_BUILD_TYPE /Debug)
 
   if(NOT DEFINED J2L_SUFFIX)
 
@@ -316,10 +316,10 @@ install(FILES
 #set ($sourceName = $sourceFile.getName())
 add_custom_command(
   TARGET ${execName}
-  DEPENDS "${CMAKE_BINARY_DIR}/${execName}${J2L_EXE_SUFFIX}"
+  DEPENDS "${CMAKE_BINARY_DIR}${J2L_BUILD_TYPE}/${execName}${J2L_EXE_SUFFIX}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${execName}${J2L_EXE_SUFFIX}"
+  "${CMAKE_BINARY_DIR}${J2L_BUILD_TYPE}/${execName}${J2L_EXE_SUFFIX}"
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${execName}${J2L_EXE_SUFFIX}"
   VERBATIM
 )
