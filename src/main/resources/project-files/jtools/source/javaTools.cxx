@@ -109,7 +109,7 @@ struct dir *open_dir(const char *path)
   }
 */
   result->pattern.assign(path);
-  result->pattern.append(".*");
+  result->pattern.append("\\*");
   result->handle = FindFirstFile(result->pattern.c_str(), &(result->find_data));
   if (result->handle == INVALID_HANDLE_VALUE) {
     //free(result->pattern);
