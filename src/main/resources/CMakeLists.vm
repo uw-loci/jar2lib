@@ -278,10 +278,10 @@ endif(WIN32)
 # copy jace_runtime.jar
 add_custom_command(
   TARGET ${projectId}
-  DEPENDS "${CMAKE_BINARY_DIR}/../jace-runtime.jar"
+  DEPENDS "${CMAKE_SOURCE_DIR}/jace-runtime.jar"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/../jace-runtime.jar"
+  "${CMAKE_SOURCE_DIR}/jace-runtime.jar"
   "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/jace-runtime.jar"
   VERBATIM
 )
