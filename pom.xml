@@ -91,7 +91,7 @@
     <contributor><name>Mark Hiner</name></contributor>
   </contributors>
 
-  <!-- NB: for loci-base, in case of partial checkout -->
+  <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
       <id>loci.releases</id>
