@@ -47,13 +47,25 @@ target_link_libraries($execName -Wl,-rpath,.)
 #end##foreach $sourceFile
 endif(UNIX)
 
+option(J2L_WIN_BUILD_DEBUG "Build Debug version? If false, builds Release. Windows only." ON)
+
+if(${J2L_WIN_BUILD_DEBUG} STREQUAL "ON")
+  if(NOT DEFINED J2L_BUILD_VALUE)
+    set(J2L_BUILD_VALUE Debug)
+  endif(NOT DEFINED J2L_BUILD_VALUE)
+elseif(${J2L_WIN_BUILD_DEBUG} STREQUAL "OFF")
+  if(NOT DEFINED J2L_BUILD_VALUE)
+    set(J2L_BUILD_VALUE Release)
+  endif(NOT DEFINED J2L_BUILD_VALUE)
+endif(${J2L_WIN_BUILD_DEBUG} STREQUAL "ON")
+
 # post-build copies to dist dir
 if(NOT DEFINED Jar2Lib_JACE_DIR)
 # set(Jar2Lib_JACE_DIR jace)
 endif(NOT DEFINED Jar2Lib_JACE_DIR)
 
 if(NOT DEFINED Jar2Lib_PROXY_DIR)
-  set(Jar2Lib_PROXY_DIR /proxies)
+  set(Jar2Lib_PROXY_DIR proxies)
 endif(NOT DEFINED Jar2Lib_PROXY_DIR)
 
 if(NOT DEFINED Jar2Lib_INCLDE_DIR)
@@ -111,29 +123,27 @@ endif(UNIX)
 
 if(WIN32)
    set(J2L_LIB_PREFIX "")
-   set(J2L_BUILD_TYPE /Release)
 
-# Building in Debug mode is not currently supported in this script
-#  set(J2L_BUILD_TYPE /Debug)
+   if(NOT DEFINED J2L_BUILD_TYPE)
+     set(J2L_BUILD_TYPE ${J2L_BUILD_VALUE})
+   endif(NOT DEFINED J2L_BUILD_TYPE)
 
   if(NOT DEFINED J2L_SUFFIX)
-
     set(J2L_SUFFIX .dll)
-
   endif(NOT DEFINED J2L_SUFFIX)
 
- if(NOT DEFINED J2L_EXE_SUFFIX)
-   set(J2L_EXE_SUFFIX .exe)
- endif(NOT DEFINED J2L_EXE_SUFFIX)
+  if(NOT DEFINED J2L_EXE_SUFFIX)
+    set(J2L_EXE_SUFFIX .exe)
+  endif(NOT DEFINED J2L_EXE_SUFFIX)
 
 endif(WIN32)
 
 if(WIN64)
   set(J2L_LIB_PREFIX "")
-  set(J2L_BUILD_TYPE /Release)
 
-#  Builing with Debug mode on Windows is not currently supported in this script.
-#  set(J2L_BUILD_TYPE /Debug)
+  if(NOT DEFINED J2L_BUILD_TYPE)
+    set(J2L_BUILD_TYPE ${J2L_BUILD_VALUE})
+  endif(NOT DEFINED J2L_BUILD_TYPE)
 
   if(NOT DEFINED J2L_SUFFIX)
 
