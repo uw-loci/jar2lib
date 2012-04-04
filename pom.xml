@@ -8,11 +8,12 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-loci</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>jar2lib</artifactId>
+  <version>1.0.0</version>
 
   <name>Jar2Lib</name>
   <description>A command line tool for generating C++ proxy classes corresponding to a Java library.</description>
