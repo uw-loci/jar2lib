@@ -51,11 +51,11 @@ option(J2L_WIN_BUILD_DEBUG "Build Debug version? If false, builds Release. Windo
 
 if(${J2L_WIN_BUILD_DEBUG} STREQUAL "ON")
   if(NOT DEFINED J2L_BUILD_VALUE)
-    set(J2L_BUILD_VALUE Debug)
+    set(J2L_BUILD_VALUE /Debug)
   endif(NOT DEFINED J2L_BUILD_VALUE)
 elseif(${J2L_WIN_BUILD_DEBUG} STREQUAL "OFF")
   if(NOT DEFINED J2L_BUILD_VALUE)
-    set(J2L_BUILD_VALUE Release)
+    set(J2L_BUILD_VALUE /Release)
   endif(NOT DEFINED J2L_BUILD_VALUE)
 endif(${J2L_WIN_BUILD_DEBUG} STREQUAL "ON")
 
@@ -84,16 +84,16 @@ if(NOT DEFINED Jar2Lib_DEPS_SRC)
   set(Jar2Lib_DEPS_SRC ../dependency)
 endif(NOT DEFINED Jar2Lib_DEPS_SRC)
 
-if(NOT DEFINED J2L_BUILD_TYPE)
-  set(J2L_BUILD_TYPE "")
-endif(NOT DEFINED J2L_BUILD_TYPE)
-
 if(NOT DEFINED J2L_LIB_PREFIX)
   set(J2L_LIB_PREFIX lib)
 endif(NOT DEFINED J2L_LIB_PREFIX)
 
 # Set the appropriate file extension for libraries on each system
 if(APPLE)
+ if(NOT DEFINED J2L_BUILD_TYPE)
+   set(J2L_BUILD_TYPE "")
+ endif(NOT DEFINED J2L_BUILD_TYPE)
+
  if(NOT DEFINED J2L_SUFFIX)
    set(J2L_SUFFIX .dylib)
  endif(NOT DEFINED J2L_SUFFIX)
@@ -109,6 +109,10 @@ if(APPLE)
 endif(APPLE)
 
 if(UNIX)
+ if(NOT DEFINED J2L_BUILD_TYPE)
+   set(J2L_BUILD_TYPE "")
+ endif(NOT DEFINED J2L_BUILD_TYPE)
+
  if(NOT DEFINED J2L_SUFFIX)
 
    set(J2L_SUFFIX .so)
