@@ -86,11 +86,23 @@
         <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
       </properties>
     </developer>
+		<developer>
+      <id>hinerm</id>
+			<name>Mark Hiner</name>
+			<email>hinerm@gmail.edu</email>
+			<url>http://developer.imagej.net/users/hinerm</url>
+			<organization>UW-Madison LOCI</organization>
+			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+			<properties>
+				<picUrl>http://developer.imagej.net/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
+			</properties>
+		</developer>
   </developers>
 
-  <contributors>
-    <contributor><name>Mark Hiner</name></contributor>
-  </contributors>
 
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
