@@ -87,26 +87,26 @@
       </roles>
       <timezone>-6</timezone>
     </developer>
-		<developer>
+    <developer>
       <id>hinerm</id>
-			<name>Mark Hiner</name>
-			<email>hiner@wisc.edu</email>
-			<url>http://loci.wisc.edu/people/mark-hiner</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>-6</timezone>
-		</developer>
+      <name>Mark Hiner</name>
+      <email>hiner@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/mark-hiner</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </developer>
   </developers>
 
-	<scm>
-		<connection>scm:git:git://github.com/uw-loci/jar2lib.git</connection>
-		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib.git</developerConnection>
-		<tag>HEAD</tag>
-		<url>https://github.com/uw-loci/jar2lib</url>
-	</scm>
+  <scm>
+    <connection>scm:git:git://github.com/uw-loci/jar2lib.git</connection>
+    <developerConnection>scm:git:git@github.com:uw-loci/jar2lib.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/uw-loci/jar2lib</url>
+  </scm>
 
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
