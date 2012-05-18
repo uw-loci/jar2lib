@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>jar2lib</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1-SNAPSHOT</version>
 
   <name>Jar2Lib</name>
   <description>A command line tool for generating C++ proxy classes corresponding to a Java library.</description>
