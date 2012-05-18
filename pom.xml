@@ -103,6 +103,12 @@
 		</developer>
   </developers>
 
+	<scm>
+		<connection>scm:git:git://github.com/uw-loci/jar2lib.git</connection>
+		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/uw-loci/jar2lib</url>
+	</scm>
 
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
