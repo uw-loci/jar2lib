@@ -31,7 +31,7 @@ if(WIN32)
   target_link_libraries(jace "${JAVA_JVM_LIBRARY}")
 else(WIN32)
   target_link_libraries(jace
-    "${JAVA_JVM_LIBRARY}" ${Boost_THREAD_LIBRARY_DEBUG})
+    "${JAVA_JVM_LIBRARY}" ${Boost_LIBRARIES})
 endif(WIN32)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
