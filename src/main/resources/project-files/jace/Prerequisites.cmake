@@ -64,7 +64,7 @@ endif(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
 if(WIN32)
   set(BOOST_ROOT ${Boost_INCLUDE_DIR})
 endif(WIN32)
-find_package(Boost COMPONENTS thread REQUIRED)
+find_package(Boost COMPONENTS system filesystem thread REQUIRED)
 
 # HACK - Make linking to Boost work on Windows systems.
 string(REGEX REPLACE "/[^/]*$" ""
