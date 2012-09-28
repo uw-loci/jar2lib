@@ -64,7 +64,9 @@ endif(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
 if(WIN32)
   set(BOOST_ROOT ${Boost_INCLUDE_DIR})
 endif(WIN32)
-find_package(Boost COMPONENTS system filesystem thread REQUIRED)
+# NB: only thread is "required".. system is a dependency of thread,
+# and OSX requires it to be explicitly requested as of CMake 3.8.9, Boost-1.51
+find_package(Boost COMPONENTS system thread REQUIRED)
 
 # HACK - Make linking to Boost work on Windows systems.
 string(REGEX REPLACE "/[^/]*$" ""
