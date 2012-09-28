@@ -64,6 +64,11 @@ endif(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
 if(WIN32)
   set(BOOST_ROOT ${Boost_INCLUDE_DIR})
 endif(WIN32)
+# NB: If installing on Windows, this find_package call will NOT
+# check for dependencies. If you installed boost via Boostpro (http://www.boostpro.com/download/)
+# make sure the Thread, System, Chrono and Date/Time were all installed (similarly,
+# boostpro doesn't install dependencies automatically).
+
 # NB: only thread is "required".. system is a dependency of thread,
 # and OSX requires it to be explicitly requested as of CMake 3.8.9, Boost-1.51
 find_package(Boost COMPONENTS system thread REQUIRED)
