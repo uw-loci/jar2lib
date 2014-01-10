@@ -1,123 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-    http://maven.apache.org/xsd/maven-v4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/xsd/maven-v4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>loci</groupId>
-    <artifactId>pom-loci</artifactId>
-    <version>1.2</version>
-  </parent>
+	<parent>
+		<groupId>loci</groupId>
+		<artifactId>pom-loci</artifactId>
+		<version>1.2</version>
+	</parent>
 
-  <artifactId>jar2lib</artifactId>
-  <version>1.1.2-SNAPSHOT</version>
+	<artifactId>jar2lib</artifactId>
+	<version>1.1.2-SNAPSHOT</version>
 
-  <name>Jar2Lib</name>
-  <description>A command line tool for generating C++ proxy classes corresponding to a Java library.</description>
-  <url>http://loci.wisc.edu/software/jar2lib</url>
-  <inceptionYear>2010</inceptionYear>
+	<name>Jar2Lib</name>
+	<description>A command line tool for generating C++ proxy classes corresponding to a Java library.</description>
+	<url>http://loci.wisc.edu/software/jar2lib</url>
+	<inceptionYear>2010</inceptionYear>
 
-  <licenses>
-    <license>
-      <name>BSD</name>
-      <url>http://dev.loci.wisc.edu/svn/software/trunk/projects/jar2lib/LICENSE.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+	<licenses>
+		<license>
+			<name>BSD</name>
+			<url>http://dev.loci.wisc.edu/svn/software/trunk/projects/jar2lib/LICENSE.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
-  <dependencies>
-    <dependency>
-      <groupId>jace</groupId>
-      <artifactId>jace</artifactId>
-      <version>r39</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.6.4</version>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>jace</groupId>
+			<artifactId>jace</artifactId>
+			<version>r39</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+	</dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>loci.jar2lib.Jar2Lib</mainClass>
-              <packageName>loci.jar2lib</packageName>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/deps.xml</descriptor>
-          </descriptors>
-          <archive>
-            <manifest>
-              <mainClass>loci.jar2lib.Jar2Lib</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>loci.jar2lib.Jar2Lib</mainClass>
+							<packageName>loci.jar2lib</packageName>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/deps.xml</descriptor>
+					</descriptors>
+					<archive>
+						<manifest>
+							<mainClass>loci.jar2lib.Jar2Lib</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
-  <developers>
-    <developer>
-      <id>ctrueden</id>
-      <name>Curtis Rueden</name>
-      <email>ctrueden@wisc.edu</email>
-      <url>http://loci.wisc.edu/people/curtis-rueden</url>
-      <organization>UW-Madison LOCI</organization>
-      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>-6</timezone>
-    </developer>
-    <developer>
-      <id>hinerm</id>
-      <name>Mark Hiner</name>
-      <email>hiner@wisc.edu</email>
-      <url>http://loci.wisc.edu/people/mark-hiner</url>
-      <organization>UW-Madison LOCI</organization>
-      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>-6</timezone>
-    </developer>
-  </developers>
+	<developers>
+		<developer>
+			<id>ctrueden</id>
+			<name>Curtis Rueden</name>
+			<email>ctrueden@wisc.edu</email>
+			<url>http://loci.wisc.edu/people/curtis-rueden</url>
+			<organization>UW-Madison LOCI</organization>
+			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+		<developer>
+			<id>hinerm</id>
+			<name>Mark Hiner</name>
+			<email>hiner@wisc.edu</email>
+			<url>http://loci.wisc.edu/people/mark-hiner</url>
+			<organization>UW-Madison LOCI</organization>
+			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+	</developers>
 
-  <scm>
-    <connection>scm:git:git://github.com/uw-loci/jar2lib.git</connection>
-    <developerConnection>scm:git:git@github.com:uw-loci/jar2lib.git</developerConnection>
-    <tag>HEAD</tag>
-    <url>https://github.com/uw-loci/jar2lib</url>
-  </scm>
+	<scm>
+		<connection>scm:git:git://github.com/uw-loci/jar2lib.git</connection>
+		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/uw-loci/jar2lib</url>
+	</scm>
 
-  <!-- NB: for project parent, in case of partial checkout -->
-  <repositories>
-    <repository>
-      <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu/maven2/releases</url>
-    </repository>
-    <repository>
-      <id>loci.snapshots</id>
-      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
-    </repository>
-  </repositories>
+	<!-- NB: for project parent, in case of partial checkout -->
+	<repositories>
+		<repository>
+			<id>loci.releases</id>
+			<url>http://dev.loci.wisc.edu/maven2/releases</url>
+		</repository>
+		<repository>
+			<id>loci.snapshots</id>
+			<url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+		</repository>
+	</repositories>
 
 </project>
