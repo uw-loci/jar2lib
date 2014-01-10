@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>loci</groupId>
 		<artifactId>pom-loci</artifactId>
-		<version>1.2</version>
+		<version>1.13</version>
 	</parent>
 
 	<artifactId>jar2lib</artifactId>
