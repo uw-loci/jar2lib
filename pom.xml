@@ -102,8 +102,8 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/uw-loci/jar2lib.git</connection>
-		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib.git</developerConnection>
+		<connection>scm:git:git://github.com/uw-loci/jar2lib</connection>
+		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/uw-loci/jar2lib</url>
 	</scm>
