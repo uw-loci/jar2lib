@@ -8,7 +8,8 @@
 	<parent>
 		<groupId>loci</groupId>
 		<artifactId>pom-loci</artifactId>
-		<version>1.13</version>
+		<version>1.15</version>
+		<relativePath />
 	</parent>
 
 	<artifactId>jar2lib</artifactId>
@@ -65,10 +66,6 @@
 						</manifest>
 					</archive>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
