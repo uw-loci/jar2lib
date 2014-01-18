@@ -22,8 +22,7 @@
 
 	<licenses>
 		<license>
-			<name>BSD</name>
-			<url>http://dev.loci.wisc.edu/svn/software/trunk/projects/jar2lib/LICENSE.txt</url>
+			<name>Simplified BSD License</name>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
