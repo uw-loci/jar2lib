@@ -38,9 +38,9 @@ package loci.jar2lib;
  */
 public class VelocityException extends Exception {
 
-  public VelocityException() { super(); }
-  public VelocityException(String s) { super(s); }
-  public VelocityException(String s, Throwable cause) { super(s, cause); }
-  public VelocityException(Throwable cause) { super(cause); }
+	public VelocityException() { super(); }
+	public VelocityException(String s) { super(s); }
+	public VelocityException(String s, Throwable cause) { super(s, cause); }
+	public VelocityException(Throwable cause) { super(cause); }
 
 }

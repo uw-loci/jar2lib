@@ -46,79 +46,79 @@ import java.util.ArrayList;
  */
 public class FixProxies {
 
-  // -- Constants --
+	// -- Constants --
 
-  private static final String PATCH_PREFIX = "JACE";
-  private static final String CONSTANT_TOKEN = "CONSTANT";
+	private static final String PATCH_PREFIX = "JACE";
+	private static final String CONSTANT_TOKEN = "CONSTANT";
 
-  private static final String HEADER_INPUT =
-    "(^.*static.* )(" + CONSTANT_TOKEN + ")\\(\\);$";
-  private static final String HEADER_OUTPUT = "$1" + PATCH_PREFIX + "_$2();";
-  private static final String SOURCE_INPUT =
-    "(JFieldProxy.*::)(" + CONSTANT_TOKEN + ")\\(\\)$";
-  private static final String SOURCE_OUTPUT = "$1" + PATCH_PREFIX + "_$2()";
+	private static final String HEADER_INPUT =
+		"(^.*static.* )(" + CONSTANT_TOKEN + ")\\(\\);$";
+	private static final String HEADER_OUTPUT = "$1" + PATCH_PREFIX + "_$2();";
+	private static final String SOURCE_INPUT =
+		"(JFieldProxy.*::)(" + CONSTANT_TOKEN + ")\\(\\)$";
+	private static final String SOURCE_OUTPUT = "$1" + PATCH_PREFIX + "_$2()";
 
-  // -- Fields --
+	// -- Fields --
 
-  private ArrayList<String> constants;
+	private ArrayList<String> constants;
 
-  // -- Constructor --
+	// -- Constructor --
 
-  public FixProxies(String conflictsFile)
-    throws IOException
-  {
-    // parse list of conflicting constants
-    constants = new ArrayList<String>();
-    BufferedReader in = new BufferedReader(new FileReader(conflictsFile));
-    while (true) {
-      String line = in.readLine();
-      if (line == null) break;
-      line = line.trim();
-      if (line.startsWith("#")) continue; // comment
-      if (line.equals("")) continue; // blank line
-      constants.add(line);
-    }
-    in.close();
-  }
+	public FixProxies(String conflictsFile)
+		throws IOException
+	{
+		// parse list of conflicting constants
+		constants = new ArrayList<String>();
+		BufferedReader in = new BufferedReader(new FileReader(conflictsFile));
+		while (true) {
+			String line = in.readLine();
+			if (line == null) break;
+			line = line.trim();
+			if (line.startsWith("#")) continue; // comment
+			if (line.equals("")) continue; // blank line
+			constants.add(line);
+		}
+		in.close();
+	}
 
-  // -- FixProxies methods --
+	// -- FixProxies methods --
 
-  public void fixProxies(String pathPrefix) {
-    for (String entry : constants) {
-      int dot = entry.lastIndexOf(".");
-      if (dot < 0) {
-        System.err.println("Warning: invalid constant: " + entry);
-        continue;
-      }
-      String path = entry.substring(0, dot).replaceAll("\\.", "/");
-      String constant = entry.substring(dot + 1);
+	public void fixProxies(String pathPrefix) {
+		for (String entry : constants) {
+			int dot = entry.lastIndexOf(".");
+			if (dot < 0) {
+				System.err.println("Warning: invalid constant: " + entry);
+				continue;
+			}
+			String path = entry.substring(0, dot).replaceAll("\\.", "/");
+			String constant = entry.substring(dot + 1);
 
-      // fix header file
-      String headerInput = HEADER_INPUT.replaceAll(CONSTANT_TOKEN, constant);
-      String headerOutput = HEADER_OUTPUT.replaceAll(CONSTANT_TOKEN, constant);
-      String headerPath = pathPrefix + "/include/jace/proxy/" + path + ".h";
-      new StringReplace(headerInput, headerOutput).processFile(headerPath);
+			// fix header file
+			String headerInput = HEADER_INPUT.replaceAll(CONSTANT_TOKEN, constant);
+			String headerOutput = HEADER_OUTPUT.replaceAll(CONSTANT_TOKEN, constant);
+			String headerPath = pathPrefix + "/include/jace/proxy/" + path + ".h";
+			new StringReplace(headerInput, headerOutput).processFile(headerPath);
 
-      // fix source file
-      String sourceInput = SOURCE_INPUT.replaceAll(CONSTANT_TOKEN, constant);
-      String sourceOutput = SOURCE_OUTPUT.replaceAll(CONSTANT_TOKEN, constant);
-      String sourcePath = pathPrefix + "/source/jace/proxy/" + path + ".cpp";
-      new StringReplace(sourceInput, sourceOutput).processFile(sourcePath);
-    }
-  }
+			// fix source file
+			String sourceInput = SOURCE_INPUT.replaceAll(CONSTANT_TOKEN, constant);
+			String sourceOutput = SOURCE_OUTPUT.replaceAll(CONSTANT_TOKEN, constant);
+			String sourcePath = pathPrefix + "/source/jace/proxy/" + path + ".cpp";
+			new StringReplace(sourceInput, sourceOutput).processFile(sourcePath);
+		}
+	}
 
-  // -- Main method --
+	// -- Main method --
 
-  public static void main(String[] args) throws IOException {
-    if (args == null || args.length < 2) {
-      System.err.println("Usage: java " + FixProxies.class.getName() +
-        " conflicts.txt /path/to/proxies [/path/to/more/proxies ...]");
-      System.exit(1);
-      return;
-    }
-    final String conflictsFile = args[0];
-    final FixProxies fixProxies = new FixProxies(conflictsFile);
-    for (int i = 1; i < args.length; i++) fixProxies.fixProxies(args[i]);
-  }
+	public static void main(String[] args) throws IOException {
+		if (args == null || args.length < 2) {
+			System.err.println("Usage: java " + FixProxies.class.getName() +
+				" conflicts.txt /path/to/proxies [/path/to/more/proxies ...]");
+			System.exit(1);
+			return;
+		}
+		final String conflictsFile = args[0];
+		final FixProxies fixProxies = new FixProxies(conflictsFile);
+		for (int i = 1; i < args.length; i++) fixProxies.fixProxies(args[i]);
+	}
 
 }

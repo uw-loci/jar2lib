@@ -50,54 +50,54 @@ import org.apache.velocity.app.VelocityEngine;
  */
 public class VelocityTools {
 
-  public static VelocityEngine createEngine() throws VelocityException {
-    // initialize Velocity engine; enable loading of templates as resources
-    VelocityEngine ve = new VelocityEngine();
-    Properties p = new Properties();
-    p.setProperty("resource.loader", "class");
-    p.setProperty("class.resource.loader.class",
-      "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-    try {
-      ve.init(p);
-    }
-    // NB: VelocityEngine.init(Properties) throws Exception.
-    catch (Exception exc) {
-      throw new VelocityException(exc);
-    }
-    return ve;
-  }
+	public static VelocityEngine createEngine() throws VelocityException {
+		// initialize Velocity engine; enable loading of templates as resources
+		VelocityEngine ve = new VelocityEngine();
+		Properties p = new Properties();
+		p.setProperty("resource.loader", "class");
+		p.setProperty("class.resource.loader.class",
+			"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+		try {
+			ve.init(p);
+		}
+		// NB: VelocityEngine.init(Properties) throws Exception.
+		catch (Exception exc) {
+			throw new VelocityException(exc);
+		}
+		return ve;
+	}
 
-  public static VelocityContext createContext() {
-    // populate Velocity context
-    VelocityContext context = new VelocityContext();
-    context.put("user", System.getProperty("user.name"));
-    DateFormat dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM);
-    DateFormat timeFmt = DateFormat.getTimeInstance(DateFormat.LONG);
-    Date date = Calendar.getInstance().getTime();
-    context.put("timestamp", dateFmt.format(date) + " " + timeFmt.format(date));
+	public static VelocityContext createContext() {
+		// populate Velocity context
+		VelocityContext context = new VelocityContext();
+		context.put("user", System.getProperty("user.name"));
+		DateFormat dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM);
+		DateFormat timeFmt = DateFormat.getTimeInstance(DateFormat.LONG);
+		Date date = Calendar.getInstance().getTime();
+		context.put("timestamp", dateFmt.format(date) + " " + timeFmt.format(date));
 
-    return context;
-  }
+		return context;
+	}
 
-  public static void processTemplate(VelocityEngine ve,
-    VelocityContext context, String inFile, String outFile)
-    throws VelocityException, IOException
-  {
-    System.out.print("Writing " + outFile + ": ");
-    final Template t;
-    try {
-      t = ve.getTemplate(inFile);
-    }
-    // NB: VelocityEngine.getTemplate(String) throws Exception.
-    catch (Exception exc) {
-      throw new VelocityException(exc);
-    }
-    final StringWriter writer = new StringWriter();
-    t.merge(context, writer);
-    final PrintWriter out = new PrintWriter(new FileWriter(outFile));
-    out.print(writer.toString());
-    out.close();
-    System.out.println("done.");
-  }
+	public static void processTemplate(VelocityEngine ve,
+		VelocityContext context, String inFile, String outFile)
+		throws VelocityException, IOException
+	{
+		System.out.print("Writing " + outFile + ": ");
+		final Template t;
+		try {
+			t = ve.getTemplate(inFile);
+		}
+		// NB: VelocityEngine.getTemplate(String) throws Exception.
+		catch (Exception exc) {
+			throw new VelocityException(exc);
+		}
+		final StringWriter writer = new StringWriter();
+		t.merge(context, writer);
+		final PrintWriter out = new PrintWriter(new FileWriter(outFile));
+		out.print(writer.toString());
+		out.close();
+		System.out.println("done.");
+	}
 
 }

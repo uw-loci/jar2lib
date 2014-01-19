@@ -51,100 +51,100 @@ import org.apache.velocity.app.VelocityEngine;
  */
 public class VelocityAutogen {
 
-  // -- Fields --
+	// -- Fields --
 
-  private String javaHeader, scriptHeader;
+	private String javaHeader, scriptHeader;
 
-  // -- Constructor --
+	// -- Constructor --
 
-  public VelocityAutogen(final String headerPath) throws IOException {
-    if (headerPath == null) javaHeader = scriptHeader = "";
-    else {
-      final File headerFile = new File(headerPath);
-      if (!headerFile.exists()) {
-        throw new IllegalArgumentException("Invalid header file: " +
-          headerPath);
-      }
-      final BufferedReader in = new BufferedReader(new FileReader(headerFile));
-      final StringBuilder javaBuilder = new StringBuilder("\n");
-      final StringBuilder scriptBuilder = new StringBuilder("\n");
-      while (true) {
-        final String line = in.readLine();
-        if (line == null) break; // EOF
-        javaBuilder.append("//");
-        if (!line.equals("")) javaBuilder.append(" ");
-        javaBuilder.append(line);
-        javaBuilder.append("\n");
-        scriptBuilder.append("#");
-        if (!line.equals("")) scriptBuilder.append(" ");
-        scriptBuilder.append(line);
-        scriptBuilder.append("\n");
-      }
-      in.close();
-      javaHeader = javaBuilder.toString();
-      scriptHeader = scriptBuilder.toString();
-    }
-  }
+	public VelocityAutogen(final String headerPath) throws IOException {
+		if (headerPath == null) javaHeader = scriptHeader = "";
+		else {
+			final File headerFile = new File(headerPath);
+			if (!headerFile.exists()) {
+				throw new IllegalArgumentException("Invalid header file: " +
+					headerPath);
+			}
+			final BufferedReader in = new BufferedReader(new FileReader(headerFile));
+			final StringBuilder javaBuilder = new StringBuilder("\n");
+			final StringBuilder scriptBuilder = new StringBuilder("\n");
+			while (true) {
+				final String line = in.readLine();
+				if (line == null) break; // EOF
+				javaBuilder.append("//");
+				if (!line.equals("")) javaBuilder.append(" ");
+				javaBuilder.append(line);
+				javaBuilder.append("\n");
+				scriptBuilder.append("#");
+				if (!line.equals("")) scriptBuilder.append(" ");
+				scriptBuilder.append(line);
+				scriptBuilder.append("\n");
+			}
+			in.close();
+			javaHeader = javaBuilder.toString();
+			scriptHeader = scriptBuilder.toString();
+		}
+	}
 
-  // -- VelocityAutogen methods --
+	// -- VelocityAutogen methods --
 
-  public void createJaceHeader(final String jarPath, final String outputPath)
-    throws VelocityException, IOException
-  {
-    final String jarName = new File(jarPath).getName();
-    int dot = jarName.lastIndexOf(".");
-    if (dot < 0) dot = jarName.length();
-    final String headerName = jarName.substring(0, dot) + ".h";
-    final String headerLabel = headerName.toUpperCase().replaceAll("\\W", "_");
-    final File headerFile = new File(outputPath, headerName);
-    final String headerPath = headerFile.getAbsolutePath();
+	public void createJaceHeader(final String jarPath, final String outputPath)
+		throws VelocityException, IOException
+	{
+		final String jarName = new File(jarPath).getName();
+		int dot = jarName.lastIndexOf(".");
+		if (dot < 0) dot = jarName.length();
+		final String headerName = jarName.substring(0, dot) + ".h";
+		final String headerLabel = headerName.toUpperCase().replaceAll("\\W", "_");
+		final File headerFile = new File(outputPath, headerName);
+		final String headerPath = headerFile.getAbsolutePath();
 
-    // parse header file template
-    final ClassList classList = new ClassList(jarPath);
+		// parse header file template
+		final ClassList classList = new ClassList(jarPath);
 
-    // initialize Velocity
-    VelocityEngine ve = VelocityTools.createEngine();
-    VelocityContext context = VelocityTools.createContext();
+		// initialize Velocity
+		VelocityEngine ve = VelocityTools.createEngine();
+		VelocityContext context = VelocityTools.createContext();
 
-    context.put("headerBlock", javaHeader);
-    context.put("headerLabel", headerLabel);
-    context.put("headerName", headerName);
-    context.put("q", classList);
+		context.put("headerBlock", javaHeader);
+		context.put("headerLabel", headerLabel);
+		context.put("headerName", headerName);
+		context.put("q", classList);
 
-    // generate C++ header file
-    VelocityTools.processTemplate(ve, context, "jace-header.vm", headerPath);
-  }
+		// generate C++ header file
+		VelocityTools.processTemplate(ve, context, "jace-header.vm", headerPath);
+	}
 
-  public void createCMakeLists(final String projectId,
-  	final String projectName, final File[] sourceFiles,
-  	final String outputPath, final List<String> libraryJars) throws VelocityException, IOException
-  {
-    final File buildFile = new File(outputPath, "CMakeLists.txt");
-    final String buildPath = buildFile.getAbsolutePath();
+	public void createCMakeLists(final String projectId,
+		final String projectName, final File[] sourceFiles,
+		final String outputPath, final List<String> libraryJars) throws VelocityException, IOException
+	{
+		final File buildFile = new File(outputPath, "CMakeLists.txt");
+		final String buildPath = buildFile.getAbsolutePath();
 
-    // initialize Velocity
-    VelocityEngine ve = VelocityTools.createEngine();
-    VelocityContext context = VelocityTools.createContext();
+		// initialize Velocity
+		VelocityEngine ve = VelocityTools.createEngine();
+		VelocityContext context = VelocityTools.createContext();
 
-    context.put("headerBlock", scriptHeader);
-    context.put("projectId", projectId);
-    context.put("projectName", projectName);
-    context.put("sourceFiles", sourceFiles);
-    context.put("sourceJars", libraryJars.toArray(new String[libraryJars.size()]));
-    context.put("q", this);
+		context.put("headerBlock", scriptHeader);
+		context.put("projectId", projectId);
+		context.put("projectName", projectName);
+		context.put("sourceFiles", sourceFiles);
+		context.put("sourceJars", libraryJars.toArray(new String[libraryJars.size()]));
+		context.put("q", this);
 
-    // generate CMakeLists.txt file
-    VelocityTools.processTemplate(ve, context, "CMakeLists.vm", buildPath);
-  }
+		// generate CMakeLists.txt file
+		VelocityTools.processTemplate(ve, context, "CMakeLists.vm", buildPath);
+	}
 
-  // -- Utility methods --
+	// -- Utility methods --
 
-  /** Gets a simple name prefix with only alphameric characters. */
-  public static String simpleName(final File file) {
-  	final String name = file.getName();
-  	final int dot = name.indexOf(".");
-  	final String prefix = dot < 0 ? name : name.substring(0, dot);
-  	return prefix.replaceAll("[^\\w\\-]", "");
-  }
+	/** Gets a simple name prefix with only alphameric characters. */
+	public static String simpleName(final File file) {
+		final String name = file.getName();
+		final int dot = name.indexOf(".");
+		final String prefix = dot < 0 ? name : name.substring(0, dot);
+		return prefix.replaceAll("[^\\w\\-]", "");
+	}
 
 }
