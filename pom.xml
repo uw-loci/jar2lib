@@ -17,7 +17,7 @@
 
 	<name>Jar2Lib</name>
 	<description>A command line tool for generating C++ proxy classes corresponding to a Java library.</description>
-	<url>http://loci.wisc.edu/software/jar2lib</url>
+	<url>https://loci.wisc.edu/software/jar2lib</url>
 	<inceptionYear>2010</inceptionYear>
 	<licenses>
 		<license>
@@ -56,7 +56,7 @@
 	<repositories>
 		<repository>
 			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
+			<url>https://maven.imagej.net/content/groups/public</url>
 		</repository>
 	</repositories>
 
