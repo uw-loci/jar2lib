@@ -19,13 +19,48 @@
 	<description>A command line tool for generating C++ proxy classes corresponding to a Java library.</description>
 	<url>http://loci.wisc.edu/software/jar2lib</url>
 	<inceptionYear>2010</inceptionYear>
-
 	<licenses>
 		<license>
 			<name>Simplified BSD License</name>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<developers>
+		<developer>
+			<id>ctrueden</id>
+			<name>Curtis Rueden</name>
+			<url>http://imagej.net/User:Rueden</url>
+			<roles>
+				<role>lead</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Mark Hiner</name>
+			<url>http://imagej.net/User:Hinerm</url>
+			<properties><id>hinerm</id></properties>
+		</contributor>
+	</contributors>
+
+	<scm>
+		<connection>scm:git:git://github.com/uw-loci/jar2lib</connection>
+		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/uw-loci/jar2lib</url>
+	</scm>
+
+	<repositories>
+		<repository>
+			<id>imagej.public</id>
+			<url>http://maven.imagej.net/content/groups/public</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -76,41 +111,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<developers>
-		<developer>
-			<id>ctrueden</id>
-			<name>Curtis Rueden</name>
-			<url>http://imagej.net/User:Rueden</url>
-			<roles>
-				<role>lead</role>
-				<role>debugger</role>
-				<role>reviewer</role>
-				<role>support</role>
-				<role>maintainer</role>
-			</roles>
-		</developer>
-	</developers>
-	<contributors>
-		<contributor>
-			<name>Mark Hiner</name>
-			<url>http://imagej.net/User:Hinerm</url>
-			<properties><id>hinerm</id></properties>
-		</contributor>
-	</contributors>
-
-	<scm>
-		<connection>scm:git:git://github.com/uw-loci/jar2lib</connection>
-		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib</developerConnection>
-		<tag>HEAD</tag>
-		<url>https://github.com/uw-loci/jar2lib</url>
-	</scm>
-
-	<repositories>
-		<repository>
-			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
-		</repository>
-	</repositories>
-
 </project>
