@@ -6,12 +6,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>loci</groupId>
-		<artifactId>pom-loci</artifactId>
-		<version>2.0.0</version>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>14.0.0</version>
 		<relativePath />
 	</parent>
 
+	<groupId>loci</groupId>
 	<artifactId>jar2lib</artifactId>
 	<version>1.1.2-SNAPSHOT</version>
 
@@ -19,6 +20,10 @@
 	<description>A command line tool for generating C++ proxy classes corresponding to a Java library.</description>
 	<url>https://loci.wisc.edu/software/jar2lib</url>
 	<inceptionYear>2010</inceptionYear>
+	<organization>
+		<name>LOCI</name>
+		<url>https://loci.wisc.edu/</url>
+	</organization>
 	<licenses>
 		<license>
 			<name>Simplified BSD License</name>
@@ -46,12 +51,39 @@
 		</contributor>
 	</contributors>
 
+	<mailingLists>
+		<mailingList>
+			<name>LOCI Software</name>
+			<subscribe>https://loci.wisc.edu/mailman/listinfo/loci-software</subscribe>
+			<unsubscribe>https://loci.wisc.edu/mailman/listinfo/loci-software</unsubscribe>
+			<post>loci-software@loci.wisc.edu</post>
+			<archive>https://loci.wisc.edu/pipermail/loci-software/</archive>
+		</mailingList>
+	</mailingLists>
+
 	<scm>
 		<connection>scm:git:git://github.com/uw-loci/jar2lib</connection>
 		<developerConnection>scm:git:git@github.com:uw-loci/jar2lib</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/uw-loci/jar2lib</url>
 	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/uw-loci/jar2lib/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/uw-loci/jar2lib</url>
+	</ciManagement>
+
+	<properties>
+		<main-class>loci.jar2lib.Jar2Lib</main-class>
+		<package-name>loci.jar2lib</package-name>
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.copyrightOwners>Board of Regents of the University of
+Wisconsin-Madison.</license.copyrightOwners>
+		<license.projectName>Jar2lib tool for generating C++ proxy classes for a Java library.</license.projectName>
+	</properties>
 
 	<repositories>
 		<repository>
@@ -76,17 +108,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>loci.jar2lib.Jar2Lib</mainClass>
-							<packageName>loci.jar2lib</packageName>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptors>
@@ -94,17 +115,9 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>loci.jar2lib.Jar2Lib</mainClass>
+							<mainClass>${main-class}</mainClass>
 						</manifest>
 					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<licenseName>bsd_2</licenseName>
-					<projectName>Jar2lib tool for generating C++ proxy classes for a Java library.</projectName>
 				</configuration>
 			</plugin>
 		</plugins>
